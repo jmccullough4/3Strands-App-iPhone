@@ -21,6 +21,7 @@
 		A10000012 /* SaleStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000012; };
 		A10000013 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A30000001; };
 		A10000014 /* LaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000013; };
+		A10000015 /* EventsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000014; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		A20000011 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		A20000012 /* SaleStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaleStore.swift; sourceTree = "<group>"; };
 		A20000013 /* LaunchScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenView.swift; sourceTree = "<group>"; };
+		A20000014 /* EventsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsView.swift; sourceTree = "<group>"; };
 		A30000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A40000001 /* ThreeStrands.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThreeStrands.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -93,6 +95,7 @@
 				A20000010 /* SaleDetailView.swift */,
 				A20000011 /* OnboardingView.swift */,
 				A20000013 /* LaunchScreenView.swift */,
+				A20000014 /* EventsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -195,6 +198,7 @@
 				A10000011 /* OnboardingView.swift in Sources */,
 				A10000012 /* SaleStore.swift in Sources */,
 				A10000014 /* LaunchScreenView.swift in Sources */,
+				A10000015 /* EventsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

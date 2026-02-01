@@ -6,9 +6,20 @@ struct ThreeStrandsApp: App {
     @StateObject private var store = SaleStore()
     @StateObject private var notificationService = NotificationService.shared
     @AppStorage("has_completed_onboarding") private var hasCompletedOnboarding = false
+    @State private var isLaunching = true
+
     var body: some Scene {
         WindowGroup {
-            if hasCompletedOnboarding {
+            if isLaunching {
+                LaunchScreenView()
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                            withAnimation(.easeOut(duration: 0.4)) {
+                                isLaunching = false
+                            }
+                        }
+                    }
+            } else if hasCompletedOnboarding {
                 ContentView()
                     .environmentObject(store)
                     .environmentObject(notificationService)
