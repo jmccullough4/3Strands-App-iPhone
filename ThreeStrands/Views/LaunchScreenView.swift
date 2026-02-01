@@ -6,7 +6,7 @@ struct LaunchScreenView: View {
             Theme.forestGreen
                 .ignoresSafeArea()
 
-            VStack(spacing: 30) {
+            VStack(spacing: 0) {
                 Spacer()
 
                 Image("Appicon")
@@ -15,10 +15,6 @@ struct LaunchScreenView: View {
                     .frame(width: 150, height: 150)
                     .clipShape(RoundedRectangle(cornerRadius: 30))
                     .shadow(color: .black.opacity(0.3), radius: 15, y: 8)
-
-                Text("3 Strands Cattle Co.")
-                    .font(.system(size: 28, weight: .bold, design: .serif))
-                    .foregroundColor(.white)
 
                 Spacer()
 

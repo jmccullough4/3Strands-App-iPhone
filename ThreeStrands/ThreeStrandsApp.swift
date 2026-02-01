@@ -6,32 +6,26 @@ struct ThreeStrandsApp: App {
     @StateObject private var store = SaleStore()
     @StateObject private var notificationService = NotificationService.shared
     @AppStorage("has_completed_onboarding") private var hasCompletedOnboarding = false
-    @State private var showLaunchScreen = true
+    @State private var isLaunching = true
 
     var body: some Scene {
         WindowGroup {
-            ZStack {
-                if hasCompletedOnboarding {
-                    ContentView()
-                        .environmentObject(store)
-                        .environmentObject(notificationService)
-                } else {
-                    OnboardingView(hasCompletedOnboarding: $hasCompletedOnboarding)
-                        .environmentObject(notificationService)
-                }
-
-                if showLaunchScreen {
-                    LaunchScreenView()
-                        .transition(.opacity)
-                        .zIndex(1)
-                }
-            }
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                    withAnimation(.easeOut(duration: 0.5)) {
-                        showLaunchScreen = false
+            if isLaunching {
+                LaunchScreenView()
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                            withAnimation(.easeOut(duration: 0.4)) {
+                                isLaunching = false
+                            }
+                        }
                     }
-                }
+            } else if hasCompletedOnboarding {
+                ContentView()
+                    .environmentObject(store)
+                    .environmentObject(notificationService)
+            } else {
+                OnboardingView(hasCompletedOnboarding: $hasCompletedOnboarding)
+                    .environmentObject(notificationService)
             }
         }
     }

@@ -116,29 +116,14 @@ struct HomeView: View {
 
     private var valuesSection: some View {
         VStack(spacing: 20) {
-            Text("Our Promise")
+            Text("Our Mission")
                 .font(Theme.headingFont)
                 .foregroundColor(Theme.textPrimary)
 
             VStack(alignment: .leading, spacing: 16) {
-                Text("\"A cord of three strands is not quickly broken.\"")
-                    .font(.system(size: 15, weight: .medium, design: .serif))
-                    .italic()
-                    .foregroundColor(Theme.primary)
-
-                Text("3 Strands Cattle Co. was born from a simple belief: faith, family, and service should be the foundation of everything we do. As a veteran-owned company, we bring the same discipline and integrity from our military service to how we raise and deliver beef.")
+                Text("Our mission is simple: glorify God through honest business, support local farmers, and provide your family with beef you can trust. Every cut is traceable, every relationship is stewarded with integrity, and a portion of every sale supports local food banks and ministries.")
                     .font(Theme.bodyFont)
                     .foregroundColor(Theme.textPrimary)
-                    .lineSpacing(4)
-
-                Text("Every cut we sell is Florida sourced — raised on local ranches by people we know and trust. We believe you deserve to know exactly where your food comes from, and we take pride in providing premium quality beef with full transparency.")
-                    .font(Theme.bodyFont)
-                    .foregroundColor(Theme.textPrimary)
-                    .lineSpacing(4)
-
-                Text("Faith driven, veteran owned, and rooted in Florida — that's our promise to you and your family.")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(Theme.forestGreen)
                     .lineSpacing(4)
             }
             .padding(20)
