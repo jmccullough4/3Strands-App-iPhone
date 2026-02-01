@@ -20,6 +20,7 @@
 		A10000011 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000011; };
 		A10000012 /* SaleStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000012; };
 		A10000013 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A30000001; };
+		A10000014 /* LaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000013; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +36,7 @@
 		A20000010 /* SaleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaleDetailView.swift; sourceTree = "<group>"; };
 		A20000011 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		A20000012 /* SaleStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaleStore.swift; sourceTree = "<group>"; };
+		A20000013 /* LaunchScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenView.swift; sourceTree = "<group>"; };
 		A30000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A40000001 /* ThreeStrands.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThreeStrands.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -90,6 +92,7 @@
 				A20000009 /* FlashSaleCard.swift */,
 				A20000010 /* SaleDetailView.swift */,
 				A20000011 /* OnboardingView.swift */,
+				A20000013 /* LaunchScreenView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -191,6 +194,7 @@
 				A10000010 /* SaleDetailView.swift in Sources */,
 				A10000011 /* OnboardingView.swift in Sources */,
 				A10000012 /* SaleStore.swift in Sources */,
+				A10000014 /* LaunchScreenView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,7 +263,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ThreeStrands/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "3 Strands";
+				INFOPLIST_KEY_CFBundleDisplayName = "3 Strands Cattle Co.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -290,7 +294,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ThreeStrands/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "3 Strands";
+				INFOPLIST_KEY_CFBundleDisplayName = "3 Strands Cattle Co.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
