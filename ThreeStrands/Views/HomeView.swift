@@ -54,9 +54,11 @@ struct HomeView: View {
             .navigationTitle("")
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("3 Strands")
-                        .font(.system(size: 20, weight: .bold, design: .serif))
-                        .foregroundColor(Theme.primary)
+                    Image("Appicon")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 36)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
             }
             .refreshable {
@@ -76,9 +78,12 @@ struct HomeView: View {
             )
 
             VStack(spacing: 12) {
-                Image(systemName: "leaf.fill")
-                    .font(.system(size: 36))
-                    .foregroundColor(Theme.gold)
+                Image("Appicon")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 80, height: 80)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .shadow(color: .black.opacity(0.3), radius: 8, y: 4)
 
                 Text("3 Strands Cattle Co.")
                     .font(.system(size: 26, weight: .bold, design: .serif))
@@ -110,37 +115,40 @@ struct HomeView: View {
     // MARK: - Values
 
     private var valuesSection: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 20) {
             Text("Our Promise")
                 .font(Theme.headingFont)
                 .foregroundColor(Theme.textPrimary)
 
-            HStack(spacing: 16) {
-                valueCard(icon: "medal.fill", title: "Veteran\nOwned", color: Theme.primary)
-                valueCard(icon: "cross.fill", title: "Faith\nDriven", color: Theme.forestGreen)
-                valueCard(icon: "mappin.circle.fill", title: "Florida\nSourced", color: Theme.gold)
+            VStack(alignment: .leading, spacing: 16) {
+                Text("\"A cord of three strands is not quickly broken.\"")
+                    .font(.system(size: 15, weight: .medium, design: .serif))
+                    .italic()
+                    .foregroundColor(Theme.primary)
+
+                Text("3 Strands Cattle Co. was born from a simple belief: faith, family, and service should be the foundation of everything we do. As a veteran-owned company, we bring the same discipline and integrity from our military service to how we raise and deliver beef.")
+                    .font(Theme.bodyFont)
+                    .foregroundColor(Theme.textPrimary)
+                    .lineSpacing(4)
+
+                Text("Every cut we sell is Florida sourced — raised on local ranches by people we know and trust. We believe you deserve to know exactly where your food comes from, and we take pride in providing premium quality beef with full transparency.")
+                    .font(Theme.bodyFont)
+                    .foregroundColor(Theme.textPrimary)
+                    .lineSpacing(4)
+
+                Text("Faith driven, veteran owned, and rooted in Florida — that's our promise to you and your family.")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(Theme.forestGreen)
+                    .lineSpacing(4)
             }
+            .padding(20)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.cornerRadius)
+                    .fill(Theme.cardBackground)
+                    .shadow(color: .black.opacity(0.05), radius: 8, y: 4)
+            )
         }
         .padding(.horizontal, Theme.screenPadding)
-    }
-
-    private func valueCard(icon: String, title: String, color: Color) -> some View {
-        VStack(spacing: 10) {
-            Image(systemName: icon)
-                .font(.system(size: 28))
-                .foregroundColor(color)
-            Text(title)
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(Theme.textPrimary)
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 20)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.cornerRadius)
-                .fill(Theme.cardBackground)
-                .shadow(color: .black.opacity(0.05), radius: 8, y: 4)
-        )
     }
 
     // MARK: - Quick Links
