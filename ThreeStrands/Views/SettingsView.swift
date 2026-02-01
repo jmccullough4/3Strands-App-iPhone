@@ -118,7 +118,7 @@ struct SettingsView: View {
                     HStack {
                         settingsRow(icon: "globe", title: "Website", color: Theme.forestGreen)
                         Spacer()
-                        Text("threestrandscattle.com")
+                        Text("3strandsbeef.com")
                             .font(Theme.captionFont)
                             .foregroundColor(Theme.textSecondary)
                     }

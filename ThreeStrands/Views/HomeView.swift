@@ -137,8 +137,9 @@ struct HomeView: View {
                 .padding(.horizontal, Theme.screenPadding)
 
             VStack(spacing: 10) {
-                linkRow(icon: "globe", title: "Visit Our Website", subtitle: "threestrandscattle.com", color: Theme.forestGreen)
-                linkRow(icon: "phone.fill", title: "Contact Us", subtitle: "M-Sat 7am-9pm ET", color: Theme.primary)
+                linkRow(icon: "globe", title: "Visit Our Website", subtitle: "3strandsbeef.com", color: Theme.forestGreen)
+                linkRow(icon: "envelope.fill", title: "Email Us", subtitle: "info@3strands.co", color: Theme.primary)
+                linkRow(icon: "phone.fill", title: "Call Us", subtitle: "(863) 799-3300", color: Theme.forestGreen)
                 linkRow(icon: "shippingbox.fill", title: "Track Your Order", subtitle: "Via Square Online", color: Theme.gold)
             }
             .padding(.horizontal, Theme.screenPadding)
