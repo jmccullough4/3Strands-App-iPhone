@@ -1,0 +1,337 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000001 /* ThreeStrandsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000001; };
+		A10000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000002; };
+		A10000003 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000003; };
+		A10000004 /* FlashSale.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000004; };
+		A10000005 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000005; };
+		A10000006 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000006; };
+		A10000007 /* FlashSalesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000007; };
+		A10000008 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000008; };
+		A10000009 /* FlashSaleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000009; };
+		A10000010 /* SaleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010; };
+		A10000011 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000011; };
+		A10000012 /* SaleStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000012; };
+		A10000013 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A30000001; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A20000001 /* ThreeStrandsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeStrandsApp.swift; sourceTree = "<group>"; };
+		A20000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A20000003 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		A20000004 /* FlashSale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashSale.swift; sourceTree = "<group>"; };
+		A20000005 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		A20000006 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		A20000007 /* FlashSalesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashSalesView.swift; sourceTree = "<group>"; };
+		A20000008 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A20000009 /* FlashSaleCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashSaleCard.swift; sourceTree = "<group>"; };
+		A20000010 /* SaleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaleDetailView.swift; sourceTree = "<group>"; };
+		A20000011 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		A20000012 /* SaleStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaleStore.swift; sourceTree = "<group>"; };
+		A30000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A40000001 /* ThreeStrands.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThreeStrands.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A50000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A60000001 = {
+			isa = PBXGroup;
+			children = (
+				A60000002 /* ThreeStrands */,
+				A60000005 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A60000002 /* ThreeStrands */ = {
+			isa = PBXGroup;
+			children = (
+				A20000001 /* ThreeStrandsApp.swift */,
+				A20000002 /* ContentView.swift */,
+				A60000003 /* Models */,
+				A60000004 /* Views */,
+				A60000006 /* Services */,
+				A30000001 /* Assets.xcassets */,
+			);
+			path = ThreeStrands;
+			sourceTree = "<group>";
+		};
+		A60000003 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A20000003 /* Theme.swift */,
+				A20000004 /* FlashSale.swift */,
+				A20000012 /* SaleStore.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A60000004 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A20000006 /* HomeView.swift */,
+				A20000007 /* FlashSalesView.swift */,
+				A20000008 /* SettingsView.swift */,
+				A20000009 /* FlashSaleCard.swift */,
+				A20000010 /* SaleDetailView.swift */,
+				A20000011 /* OnboardingView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A60000005 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A40000001 /* ThreeStrands.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A60000006 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A20000005 /* NotificationService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A70000001 /* ThreeStrands */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A80000003;
+			buildPhases = (
+				A90000001 /* Sources */,
+				A50000001 /* Frameworks */,
+				AB0000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ThreeStrands;
+			productName = ThreeStrands;
+			productReference = A40000001 /* ThreeStrands.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA0000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A70000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A80000001;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A60000001;
+			productRefGroup = A60000005 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A70000001 /* ThreeStrands */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AB0000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000013 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A90000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000001 /* ThreeStrandsApp.swift in Sources */,
+				A10000002 /* ContentView.swift in Sources */,
+				A10000003 /* Theme.swift in Sources */,
+				A10000004 /* FlashSale.swift in Sources */,
+				A10000005 /* NotificationService.swift in Sources */,
+				A10000006 /* HomeView.swift in Sources */,
+				A10000007 /* FlashSalesView.swift in Sources */,
+				A10000008 /* SettingsView.swift in Sources */,
+				A10000009 /* FlashSaleCard.swift in Sources */,
+				A10000010 /* SaleDetailView.swift in Sources */,
+				A10000011 /* OnboardingView.swift in Sources */,
+				A10000012 /* SaleStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A80000002 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A80000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A80000005 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ThreeStrands/ThreeStrands.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ThreeStrands/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ThreeStrands/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "3 Strands";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.threestrandscattle.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A80000006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ThreeStrands/ThreeStrands.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ThreeStrands/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ThreeStrands/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "3 Strands";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.threestrandscattle.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A80000001 /* Build configuration list for PBXProject */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A80000002 /* Debug */,
+				A80000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A80000003 /* Build configuration list for PBXNativeTarget */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A80000005 /* Debug */,
+				A80000006 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = AA0000001 /* Project object */;
+}
