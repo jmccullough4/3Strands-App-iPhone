@@ -19,11 +19,17 @@ struct ContentView: View {
                 .tag(1)
                 .badge(store.activeSales.count)
 
+            EventsView()
+                .tabItem {
+                    Label("Events", systemImage: "calendar")
+                }
+                .tag(2)
+
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")
                 }
-                .tag(2)
+                .tag(3)
         }
         .tint(Theme.primary)
     }
