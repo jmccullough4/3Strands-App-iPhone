@@ -12,13 +12,35 @@ struct OnboardingView: View {
             VStack(spacing: 0) {
                 TabView(selection: $currentPage) {
                     // Page 1: Welcome
-                    onboardingPage(
-                        icon: "leaf.fill",
-                        iconColor: Theme.forestGreen,
-                        title: "Welcome to\n3 Strands Cattle Co.",
-                        subtitle: "Veteran owned. Faith driven.\nFlorida sourced.",
-                        detail: "Premium beef delivered straight from Florida ranches to your door."
-                    )
+                    VStack(spacing: 24) {
+                        Spacer()
+
+                        Image("Appicon")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 120, height: 120)
+                            .clipShape(RoundedRectangle(cornerRadius: 24))
+                            .shadow(color: .black.opacity(0.2), radius: 10, y: 5)
+
+                        Text("Welcome to\n3 Strands Cattle Co.")
+                            .font(Theme.heroFont)
+                            .foregroundColor(Theme.textPrimary)
+                            .multilineTextAlignment(.center)
+
+                        Text("Veteran owned. Faith driven.\nFlorida sourced.")
+                            .font(Theme.subheadingFont)
+                            .foregroundColor(Theme.primary)
+                            .multilineTextAlignment(.center)
+
+                        Text("Premium beef delivered straight from Florida ranches to your door.")
+                            .font(Theme.bodyFont)
+                            .foregroundColor(Theme.textSecondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 40)
+
+                        Spacer()
+                        Spacer()
+                    }
                     .tag(0)
 
                     // Page 2: Flash Sales
