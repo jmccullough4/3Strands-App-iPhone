@@ -51,16 +51,7 @@ struct HomeView: View {
                 .padding(.bottom, 30)
             }
             .background(Theme.background)
-            .navigationTitle("")
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Image("Appicon")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 36)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                }
-            }
+            .navigationBarHidden(true)
             .refreshable {
                 await store.refreshSales()
             }
