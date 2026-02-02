@@ -50,6 +50,7 @@ struct PopUpSaleView: View {
             }
             .background(Theme.background)
             .navigationTitle("Pop-Up Sales")
+            .navigationBarTitleDisplayMode(.inline)
             .refreshable {
                 await loadSales()
             }

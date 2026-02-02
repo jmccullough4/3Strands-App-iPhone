@@ -61,6 +61,7 @@ struct MenuView: View {
             }
             .background(Theme.background)
             .navigationTitle("Our Menu")
+            .navigationBarTitleDisplayMode(.inline)
             .refreshable {
                 await loadCatalog()
             }
@@ -75,10 +76,6 @@ struct MenuView: View {
         errorMessage = nil
         do {
             items = try await APIService.shared.fetchCatalog()
-        } catch APIError.catalogNotConfigured {
-            // Show the empty/coming soon state, not an error
-            items = []
-            print("Catalog not configured yet")
         } catch {
             errorMessage = error.localizedDescription
             print("Catalog fetch error: \(error)")
