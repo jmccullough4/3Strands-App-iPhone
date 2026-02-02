@@ -2,10 +2,10 @@ import SwiftUI
 import MapKit
 
 struct PopUpSaleView: View {
-    @State private var sales: [PopUpSale] = []
+    @State private var events: [PopUpEvent] = []
     @State private var isLoading = true
     @State private var errorMessage: String?
-    @State private var selectedSale: PopUpSale?
+    @State private var selectedEvent: PopUpEvent?
 
     var body: some View {
         NavigationStack {
@@ -23,14 +23,14 @@ struct PopUpSaleView: View {
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
                         Button("Try Again") {
-                            Task { await loadSales() }
+                            Task { await loadEvents() }
                         }
                         .buttonStyle(.borderedProminent)
                         .tint(Theme.primary)
                     }
                     .padding()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if sales.isEmpty {
+                } else if events.isEmpty {
                     VStack(spacing: 16) {
                         Image(systemName: "mappin.and.ellipse")
                             .font(.system(size: 40))
@@ -43,92 +43,29 @@ struct PopUpSaleView: View {
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
-                    VStack(spacing: 0) {
-                        mapView
-                        salesList
+                    List(events) { event in
+                        PopUpEventRow(event: event)
                     }
+                    .listStyle(.insetGrouped)
                 }
             }
             .navigationTitle("Pop-Up Sales")
             .refreshable {
-                await loadSales()
+                await loadEvents()
             }
         }
         .task {
-            await loadSales()
-        }
-        .sheet(item: $selectedSale) { sale in
-            PopUpSaleDetailSheet(sale: sale)
+            await loadEvents()
         }
     }
 
-    private var mapView: some View {
-        Map {
-            ForEach(sales) { sale in
-                Annotation(sale.title, coordinate: CLLocationCoordinate2D(latitude: sale.latitude, longitude: sale.longitude)) {
-                    Button {
-                        selectedSale = sale
-                    } label: {
-                        Image(systemName: "mappin.circle.fill")
-                            .font(.title)
-                            .foregroundColor(Theme.primary)
-                    }
-                }
-            }
-        }
-        .frame(height: 300)
-    }
-
-    private var salesList: some View {
-        List(sales) { sale in
-            Button {
-                selectedSale = sale
-            } label: {
-                HStack(spacing: 14) {
-                    Image(systemName: "mappin.circle.fill")
-                        .font(.system(size: 28))
-                        .foregroundColor(Theme.primary)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(sale.title)
-                            .font(.headline)
-                            .foregroundColor(Theme.textPrimary)
-
-                        if let address = sale.address, !address.isEmpty {
-                            Text(address)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .lineLimit(2)
-                        }
-
-                        if let desc = sale.description, !desc.isEmpty {
-                            Text(desc)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
-                        }
-                    }
-
-                    Spacer()
-
-                    Image(systemName: "chevron.right")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                .padding(.vertical, 4)
-            }
-            .buttonStyle(.plain)
-        }
-        .listStyle(.insetGrouped)
-    }
-
-    private func loadSales() async {
-        isLoading = sales.isEmpty
+    private func loadEvents() async {
+        isLoading = events.isEmpty
         errorMessage = nil
         do {
-            sales = try await APIService.shared.fetchPopUpSales()
+            events = try await APIService.shared.fetchPopUpEvents()
         } catch {
-            if sales.isEmpty {
+            if events.isEmpty {
                 errorMessage = error.localizedDescription
             }
         }
@@ -136,96 +73,90 @@ struct PopUpSaleView: View {
     }
 }
 
-// MARK: - Detail Sheet with directions
+// MARK: - Pop-Up Event Row
 
-struct PopUpSaleDetailSheet: View {
-    let sale: PopUpSale
-    @Environment(\.dismiss) private var dismiss
+struct PopUpEventRow: View {
+    let event: PopUpEvent
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 20) {
-                // Map preview
-                Map {
-                    Marker(sale.title, coordinate: CLLocationCoordinate2D(latitude: sale.latitude, longitude: sale.longitude))
-                        .tint(Theme.primary)
-                }
-                .frame(height: 200)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .padding(.horizontal)
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 12) {
+                Image(systemName: event.icon ?? "leaf.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(Theme.primary)
+                    .frame(width: 40, height: 40)
+                    .background(Theme.primary.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
 
-                VStack(spacing: 12) {
-                    Text(sale.title)
-                        .font(.title2.weight(.bold))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(event.title)
+                        .font(.headline)
                         .foregroundColor(Theme.textPrimary)
 
-                    if let address = sale.address, !address.isEmpty {
-                        Text(address)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                    }
-
-                    if let desc = sale.description, !desc.isEmpty {
-                        Text(desc)
-                            .font(.body)
-                            .foregroundColor(Theme.textPrimary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
+                    if let dateStr = event.date {
+                        Text(formatDate(dateStr))
+                            .font(.caption)
+                            .foregroundColor(Theme.gold)
                     }
                 }
-
-                // Open in Maps buttons
-                VStack(spacing: 12) {
-                    Button {
-                        openInAppleMaps()
-                    } label: {
-                        Label("Open in Apple Maps", systemImage: "map.fill")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Theme.primary)
-                            .foregroundColor(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                    }
-
-                    Button {
-                        openInGoogleMaps()
-                    } label: {
-                        Label("Open in Google Maps", systemImage: "globe")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Theme.forestGreen)
-                            .foregroundColor(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                    }
-                }
-                .padding(.horizontal)
 
                 Spacer()
             }
-            .padding(.top)
-            .navigationTitle("Pop-Up Sale")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { dismiss() }
+
+            Text(event.location)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+
+            HStack(spacing: 12) {
+                Button {
+                    openInAppleMaps()
+                } label: {
+                    Label("Apple Maps", systemImage: "map.fill")
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Capsule().fill(Theme.primary))
+                }
+
+                Button {
+                    openInGoogleMaps()
+                } label: {
+                    Label("Google Maps", systemImage: "globe")
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Capsule().fill(Theme.forestGreen))
                 }
             }
         }
+        .padding(.vertical, 6)
+    }
+
+    private func formatDate(_ isoString: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        formatter.timeZone = TimeZone(identifier: "UTC")
+        guard let date = formatter.date(from: isoString) else { return isoString }
+        let display = DateFormatter()
+        display.dateStyle = .medium
+        display.timeStyle = .short
+        return display.string(from: date)
     }
 
     private func openInAppleMaps() {
-        let coordinate = CLLocationCoordinate2D(latitude: sale.latitude, longitude: sale.longitude)
-        let placemark = MKPlacemark(coordinate: coordinate)
-        let mapItem = MKMapItem(placemark: placemark)
-        mapItem.name = sale.title
-        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
+        let query = event.location.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        if let url = URL(string: "maps://?q=\(query)") {
+            openURL(url)
+        }
     }
 
     private func openInGoogleMaps() {
-        let urlString = "https://www.google.com/maps/dir/?api=1&destination=\(sale.latitude),\(sale.longitude)"
-        if let url = URL(string: urlString) {
-            UIApplication.shared.open(url)
+        let query = event.location.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        if let url = URL(string: "https://www.google.com/maps/search/?api=1&query=\(query)") {
+            openURL(url)
         }
     }
 }
