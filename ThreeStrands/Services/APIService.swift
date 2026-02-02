@@ -19,9 +19,7 @@ class APIService {
         config.timeoutIntervalForRequest = 15
         config.timeoutIntervalForResource = 30
         self.session = URLSession(configuration: config)
-
         self.decoder = JSONDecoder()
-        self.decoder.dateDecodingStrategy = .iso8601
     }
 
     // MARK: - Flash Sales
@@ -45,7 +43,7 @@ class APIService {
             throw APIError.serverError
         }
         let wrapper = try decoder.decode(CatalogResponse.self, from: data)
-        return wrapper.items
+        return wrapper.groupedItems
     }
 
     // MARK: - Device Registration
@@ -78,54 +76,100 @@ enum APIError: LocalizedError {
     }
 }
 
-// MARK: - API Response Models
+// MARK: - Flash Sale API Model
+// Dashboard sends camelCase keys: id (string), title, description, cutType,
+// originalPrice, salePrice, weightLbs, imageSystemName, isActive, startsAt, expiresAt, createdAt
 
 struct APIFlashSale: Codable {
-    let id: Int
+    let id: String
     let title: String
-    let description: String
+    let description: String?
     let cutType: String
     let originalPrice: Double
     let salePrice: Double
     let weightLbs: Double
-    let startsAt: String
-    let expiresAt: String
+    let startsAt: String?
+    let expiresAt: String?
     let imageSystemName: String
     let isActive: Bool
 
-    enum CodingKeys: String, CodingKey {
-        case id, title, description
-        case cutType = "cut_type"
-        case originalPrice = "original_price"
-        case salePrice = "sale_price"
-        case weightLbs = "weight_lbs"
-        case startsAt = "starts_at"
-        case expiresAt = "expires_at"
-        case imageSystemName = "image_system_name"
-        case isActive = "is_active"
-    }
-
     func toFlashSale() -> FlashSale {
         let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+
+        let iso2 = ISO8601DateFormatter()
+        iso2.formatOptions = [.withInternetDateTime]
+
+        func parseDate(_ s: String?) -> Date? {
+            guard let s else { return nil }
+            return iso.date(from: s) ?? iso2.date(from: s)
+        }
+
         return FlashSale(
-            id: UUID(),
+            id: id,
             title: title,
-            description: description,
+            description: description ?? "",
             cutType: CutType(rawValue: cutType) ?? .custom,
             originalPrice: originalPrice,
             salePrice: salePrice,
             weightLbs: weightLbs,
-            startsAt: iso.date(from: startsAt) ?? Date(),
-            expiresAt: iso.date(from: expiresAt) ?? Date(),
+            startsAt: parseDate(startsAt) ?? Date(),
+            expiresAt: parseDate(expiresAt) ?? Date().addingTimeInterval(86400),
             imageSystemName: imageSystemName,
             isActive: isActive
         )
     }
 }
 
+// MARK: - Catalog API Models
+// Dashboard sends: {"items": [...], "count": N}
+// Each item is flat: {id, variationId, name, variationName, description, price, priceCurrency, category, isAvailable}
+
 struct CatalogResponse: Codable {
-    let items: [CatalogItem]
-    let source: String
+    let items: [APICatalogItem]
+    let count: Int?
+
+    /// Group flat variation rows into CatalogItems
+    var groupedItems: [CatalogItem] {
+        var dict: [String: CatalogItem] = [:]
+        var order: [String] = []
+
+        for item in items {
+            let variation = CatalogVariation(
+                id: item.variationId,
+                name: item.variationName,
+                priceCents: Int(item.price * 100)
+            )
+
+            if var existing = dict[item.id] {
+                existing.variations.append(variation)
+                dict[item.id] = existing
+            } else {
+                order.append(item.id)
+                dict[item.id] = CatalogItem(
+                    id: item.id,
+                    name: item.name,
+                    description: item.description,
+                    category: item.category,
+                    variations: [variation]
+                )
+            }
+        }
+
+        return order.compactMap { dict[$0] }
+    }
+}
+
+struct APICatalogItem: Codable {
+    let id: String
+    let variationId: String
+    let name: String
+    let variationName: String
+    let description: String?
+    let price: Double
+    let priceCurrency: String?
+    let category: String?
+    let isAvailable: Bool?
 }
 
 struct CatalogItem: Identifiable, Codable {
@@ -133,7 +177,7 @@ struct CatalogItem: Identifiable, Codable {
     let name: String
     let description: String?
     let category: String?
-    let variations: [CatalogVariation]
+    var variations: [CatalogVariation]
 
     var lowestPrice: Int? {
         variations.compactMap { $0.priceCents }.min()
@@ -153,11 +197,6 @@ struct CatalogVariation: Identifiable, Codable {
     let id: String
     let name: String
     let priceCents: Int?
-
-    enum CodingKeys: String, CodingKey {
-        case id, name
-        case priceCents = "price_cents"
-    }
 
     var formattedPrice: String {
         guard let cents = priceCents else { return "Market Price" }

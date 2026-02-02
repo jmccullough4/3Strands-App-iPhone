@@ -3,7 +3,7 @@ import Foundation
 // MARK: - Flash Sale Model
 
 struct FlashSale: Identifiable, Codable {
-    let id: UUID
+    let id: String
     let title: String
     let description: String
     let cutType: CutType
@@ -94,7 +94,7 @@ struct NotificationPreferences: Codable {
 extension FlashSale {
     static let samples: [FlashSale] = [
         FlashSale(
-            id: UUID(),
+            id: "sample-1",
             title: "Weekend Ribeye Blowout",
             description: "Premium Florida-raised ribeye steaks, hand-cut and dry-aged 21 days. Perfect marbling for the grill. Limited supply from our latest harvest.",
             cutType: .ribeye,
@@ -107,7 +107,7 @@ extension FlashSale {
             isActive: true
         ),
         FlashSale(
-            id: UUID(),
+            id: "sample-2",
             title: "Family Essentials Bundle",
             description: "Our most popular family pack: 2lb ground beef, 2 NY strips, 1 chuck roast, and 1lb stew meat. Feeds a family of 4 for a week. Florida sourced, veteran approved.",
             cutType: .bundle,
@@ -120,7 +120,7 @@ extension FlashSale {
             isActive: true
         ),
         FlashSale(
-            id: UUID(),
+            id: "sample-3",
             title: "Grillmaster's NY Strip",
             description: "Thick-cut New York strips, perfect 1.25\" thickness. Sourced from our Florida partner ranches. Faith driven quality you can taste.",
             cutType: .nyStrip,
@@ -133,7 +133,7 @@ extension FlashSale {
             isActive: true
         ),
         FlashSale(
-            id: UUID(),
+            id: "sample-4",
             title: "Brisket — Low & Slow Special",
             description: "Whole packer brisket, untrimmed. Perfect for smoking. From Florida cattle raised on open pasture. Veteran owned quality.",
             cutType: .brisket,
@@ -146,7 +146,7 @@ extension FlashSale {
             isActive: true
         ),
         FlashSale(
-            id: UUID(),
+            id: "sample-5",
             title: "Ground Beef — Bulk Buy",
             description: "80/20 ground beef in 1lb packs. Stock your freezer at an unbeatable price. Always fresh, never frozen until packed.",
             cutType: .groundBeef,
