@@ -161,8 +161,14 @@ struct CatalogItem: Identifiable, Codable {
         variations.compactMap { $0.priceMoney?.amount }.min()
     }
 
+    var isSoldOut: Bool {
+        // All variations have no price or zero price
+        let prices = variations.compactMap { $0.priceMoney?.amount }
+        return prices.isEmpty || prices.allSatisfy { $0 == 0 }
+    }
+
     var formattedPrice: String {
-        guard let cents = lowestPrice else { return "Market Price" }
+        guard let cents = lowestPrice, cents > 0 else { return "Market Price" }
         let dollars = Double(cents) / 100.0
         if variations.count > 1 {
             return String(format: "From $%.2f", dollars)
