@@ -45,6 +45,11 @@ class NotificationService: NSObject, ObservableObject {
             self.authorizationStatus = settings.authorizationStatus
             self.isAuthorized = settings.authorizationStatus == .authorized
         }
+
+        // Re-register if authorized to keep token fresh
+        if settings.authorizationStatus == .authorized {
+            await registerForRemoteNotifications()
+        }
     }
 
     // MARK: - Register for Remote Notifications
@@ -54,17 +59,23 @@ class NotificationService: NSObject, ObservableObject {
         UIApplication.shared.registerForRemoteNotifications()
     }
 
-    // MARK: - Handle Device Token
+    // MARK: - Handle Device Token from APNs
 
-    func didRegisterForRemoteNotifications(deviceToken: Data) {
-        let token = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
+    func didRegisterForRemoteNotifications(deviceToken data: Data) {
+        let token = data.map { String(format: "%02.2hhx", $0) }.joined()
+        print("APNs Device Token: \(token)")
+
         Task { @MainActor in
             self.deviceToken = token
+
+            // Send the real APNs token to the dashboard
+            do {
+                try await APIService.shared.registerDevice(token: token)
+                print("APNs token registered with dashboard")
+            } catch {
+                print("Failed to register APNs token: \(error.localizedDescription)")
+            }
         }
-        // In production, send this token to your backend:
-        // POST https://api.threestrandscattle.com/devices/register
-        // Body: { "token": token, "platform": "ios" }
-        print("APNs Device Token: \(token)")
     }
 
     // MARK: - Schedule Local Notification (for demo/testing)

@@ -2,8 +2,97 @@ import SwiftUI
 
 // MARK: - Menu / Shop View (Square Catalog)
 
+// Category definitions matching the website layout
+enum MenuCategory: String, CaseIterable {
+    case premiumSteaks = "Premium Steaks"
+    case roasts = "Roasts"
+    case additionalOfferings = "Additional Offerings"
+    case specialtyOffal = "Specialty & Offal"
+    case farmFreshEggs = "Farm Fresh Eggs"
+
+    var icon: String {
+        switch self {
+        case .premiumSteaks: return "flame.fill"
+        case .roasts: return "oven.fill"
+        case .additionalOfferings: return "leaf.fill"
+        case .specialtyOffal: return "heart.fill"
+        case .farmFreshEggs: return "bird.fill"
+        }
+    }
+
+    // Map item names to categories, matching website order
+    static let itemCategories: [(String, MenuCategory)] = [
+        // Premium Steaks (high to low price)
+        ("Filet Mignon", .premiumSteaks),
+        ("Ribeye Steak", .premiumSteaks),
+        ("Sirloin Cap - Picanha", .premiumSteaks),
+        ("NY Strip Steak", .premiumSteaks),
+        ("Sirloin Flap Steak", .premiumSteaks),
+        ("Sirloin Tip Steak", .premiumSteaks),
+        ("Inside Skirt Steak", .premiumSteaks),
+        ("Outside Skirt Steak", .premiumSteaks),
+        ("Flank Steak", .premiumSteaks),
+        ("Flat Iron Steak", .premiumSteaks),
+        ("Chuck Eye Steak", .premiumSteaks),
+        ("Petite Sirloin Steak", .premiumSteaks),
+        ("Denver Steak", .premiumSteaks),
+
+        // Roasts
+        ("Tri Tip Roast", .roasts),
+        ("Sirloin Tip Roast", .roasts),
+        ("Eye Round Roast", .roasts),
+        ("Rump Roast - Beef", .roasts),
+        ("Chuck Roast", .roasts),
+
+        // Additional Offerings
+        ("Oxtails - Beef", .additionalOfferings),
+        ("Short Rib Bone In - Beef", .additionalOfferings),
+        ("Brisket", .additionalOfferings),
+        ("Ground Beef", .additionalOfferings),
+        ("London Broil", .additionalOfferings),
+        ("Stew Meat - Beef", .additionalOfferings),
+        ("Osso Bucco - Cross Cut Shank", .additionalOfferings),
+        ("Beef Belly", .additionalOfferings),
+
+        // Specialty & Offal
+        ("Beef Heart", .specialtyOffal),
+        ("Heart - Beef", .specialtyOffal),
+        ("Beef Liver", .specialtyOffal),
+        ("Liver - Beef", .specialtyOffal),
+        ("Beef Tongue", .specialtyOffal),
+        ("Marrow Bones Split - Beef", .specialtyOffal),
+        ("Soup Bones - Beef", .specialtyOffal),
+
+        // Farm Fresh Eggs
+        ("Eggs Half Dozen", .farmFreshEggs),
+        ("Eggs Dozen", .farmFreshEggs),
+    ]
+
+    // Service items to exclude from the menu
+    static let excludedItems: Set<String> = [
+        "Beef Home Delivery",
+        "Beef Pickup",
+        "Market Appearance",
+        "Shipping",
+    ]
+
+    static func category(for itemName: String) -> MenuCategory? {
+        itemCategories.first(where: { $0.0 == itemName })?.1
+    }
+
+    static func sortOrder(for itemName: String) -> Int {
+        itemCategories.firstIndex(where: { $0.0 == itemName }) ?? 999
+    }
+}
+
+struct MenuSection: Identifiable {
+    let id = UUID()
+    let category: MenuCategory
+    let items: [CatalogItem]
+}
+
 struct MenuView: View {
-    @State private var items: [CatalogItem] = []
+    @State private var sections: [MenuSection] = []
     @State private var isLoading = true
     @State private var errorMessage: String?
 
@@ -30,7 +119,7 @@ struct MenuView: View {
                     }
                     .padding()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if items.isEmpty {
+                } else if sections.isEmpty {
                     VStack(spacing: 16) {
                         Image(systemName: "storefront")
                             .font(.system(size: 40))
@@ -53,8 +142,24 @@ struct MenuView: View {
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
-                    List(items) { item in
-                        MenuItemRow(item: item)
+                    List {
+                        ForEach(sections) { section in
+                            Section {
+                                ForEach(section.items) { item in
+                                    MenuItemRow(item: item)
+                                }
+                            } header: {
+                                HStack(spacing: 8) {
+                                    Image(systemName: section.category.icon)
+                                        .foregroundColor(Theme.primary)
+                                    Text(section.category.rawValue)
+                                        .font(.system(size: 16, weight: .bold, design: .serif))
+                                        .foregroundColor(Theme.primary)
+                                }
+                                .padding(.vertical, 4)
+                                .textCase(nil)
+                            }
+                        }
                     }
                     .listStyle(.insetGrouped)
                 }
@@ -72,10 +177,32 @@ struct MenuView: View {
     }
 
     private func loadCatalog() async {
-        isLoading = items.isEmpty
+        isLoading = sections.isEmpty
         errorMessage = nil
         do {
-            items = try await APIService.shared.fetchCatalog()
+            let allItems = try await APIService.shared.fetchCatalog()
+
+            // Filter out service items and group by category
+            let productItems = allItems.filter { !MenuCategory.excludedItems.contains($0.name) }
+
+            var grouped: [MenuCategory: [CatalogItem]] = [:]
+            for item in productItems {
+                let cat = MenuCategory.category(for: item.name) ?? .additionalOfferings
+                grouped[cat, default: []].append(item)
+            }
+
+            // Sort items within each category by the website order
+            for (cat, items) in grouped {
+                grouped[cat] = items.sorted {
+                    MenuCategory.sortOrder(for: $0.name) < MenuCategory.sortOrder(for: $1.name)
+                }
+            }
+
+            // Build sections in the correct category order
+            sections = MenuCategory.allCases.compactMap { cat in
+                guard let items = grouped[cat], !items.isEmpty else { return nil }
+                return MenuSection(category: cat, items: items)
+            }
         } catch {
             errorMessage = error.localizedDescription
             print("Catalog fetch error: \(error)")
@@ -94,30 +221,22 @@ struct MenuItemRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(item.name)
-                        .font(.headline)
-                        .foregroundColor(Theme.primary)
-
-                    if let category = item.category {
-                        Text(category)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
+                Text(item.name)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(Theme.primary)
 
                 Spacer()
 
-                Text(item.formattedPrice)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundColor(Theme.forestGreen)
-            }
-
-            if let desc = item.description, !desc.isEmpty {
-                Text(desc)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .lineLimit(isExpanded ? nil : 2)
+                if item.isSoldOut {
+                    Text("Sold Out")
+                        .font(.caption.weight(.bold))
+                        .foregroundColor(.red.opacity(0.8))
+                        .italic()
+                } else {
+                    Text(item.formattedPrice)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(Theme.forestGreen)
+                }
             }
 
             if item.variations.count > 1 {
