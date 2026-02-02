@@ -1,4 +1,6 @@
 import Foundation
+import UIKit
+import Security
 
 // MARK: - API Service for Dashboard Backend
 
@@ -71,7 +73,12 @@ class APIService {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        let body = ["token": token, "platform": "ios"]
+        let body: [String: String] = [
+            "token": token,
+            "platform": "ios",
+            "device_id": DeviceIdentifier.persistentID,
+            "device_name": DeviceIdentifier.deviceName
+        ]
         request.httpBody = try JSONEncoder().encode(body)
         let (_, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
@@ -210,4 +217,49 @@ struct PopUpSale: Identifiable, Codable {
     let isActive: Bool
 
     var stringId: String { String(id) }
+}
+
+// MARK: - Persistent Device Identifier
+
+enum DeviceIdentifier {
+    private static let keychainKey = "com.threestrandscattle.app.device-id"
+
+    /// A persistent UUID that survives app reinstalls (stored in Keychain)
+    static var persistentID: String {
+        if let existing = readFromKeychain() {
+            return existing
+        }
+        let newID = UUID().uuidString
+        saveToKeychain(newID)
+        return newID
+    }
+
+    /// Human-readable device name (e.g. "John's iPhone 15")
+    static var deviceName: String {
+        UIDevice.current.name
+    }
+
+    private static func readFromKeychain() -> String? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: keychainKey,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        guard status == errSecSuccess, let data = result as? Data else { return nil }
+        return String(data: data, encoding: .utf8)
+    }
+
+    private static func saveToKeychain(_ value: String) {
+        let data = value.data(using: .utf8)!
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: keychainKey,
+            kSecValueData as String: data
+        ]
+        SecItemDelete(query as CFDictionary)
+        SecItemAdd(query as CFDictionary, nil)
+    }
 }
