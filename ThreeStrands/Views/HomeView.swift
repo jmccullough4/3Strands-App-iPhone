@@ -42,6 +42,9 @@ struct HomeView: View {
                         }
                     }
 
+                    // Pop-Up Sales
+                    popUpSalesSection
+
                     // Values section
                     valuesSection
 
@@ -103,6 +106,74 @@ struct HomeView: View {
         .padding(.top, 8)
     }
 
+    // MARK: - Pop-Up Sales
+
+    @State private var popUpSales: [PopUpSale] = []
+
+    private var popUpSalesSection: some View {
+        Group {
+            if !popUpSales.isEmpty {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Image(systemName: "mappin.and.ellipse")
+                            .foregroundColor(Theme.gold)
+                        Text("Pop-Up Sales")
+                            .font(Theme.headingFont)
+                            .foregroundColor(Theme.textPrimary)
+                        Spacer()
+                    }
+                    .padding(.horizontal, Theme.screenPadding)
+
+                    ForEach(popUpSales) { sale in
+                        NavigationLink(destination: PopUpSaleView()) {
+                            HStack(spacing: 14) {
+                                Image(systemName: "mappin.circle.fill")
+                                    .font(.system(size: 28))
+                                    .foregroundColor(Theme.primary)
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(sale.title)
+                                        .font(.system(size: 15, weight: .semibold))
+                                        .foregroundColor(Theme.textPrimary)
+                                    if let address = sale.address, !address.isEmpty {
+                                        Text(address)
+                                            .font(Theme.captionFont)
+                                            .foregroundColor(Theme.textSecondary)
+                                            .lineLimit(1)
+                                    }
+                                }
+
+                                Spacer()
+
+                                Text("Get Directions")
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 6)
+                                    .background(Capsule().fill(Theme.forestGreen))
+                            }
+                            .padding(14)
+                            .background(
+                                RoundedRectangle(cornerRadius: Theme.cornerRadius)
+                                    .fill(Theme.cardBackground)
+                                    .shadow(color: .black.opacity(0.04), radius: 6, y: 3)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.horizontal, Theme.screenPadding)
+                    }
+                }
+            }
+        }
+        .task {
+            do {
+                popUpSales = try await APIService.shared.fetchPopUpSales()
+            } catch {
+                print("Pop-up sales fetch failed: \(error.localizedDescription)")
+            }
+        }
+    }
+
     // MARK: - Values
 
     private var valuesSection: some View {
@@ -140,7 +211,6 @@ struct HomeView: View {
                 linkButton(icon: "globe", title: "Visit Our Website", subtitle: "3strandsbeef.com", color: Theme.forestGreen, urlString: "https://3strandsbeef.com")
                 linkButton(icon: "envelope.fill", title: "Email Us", subtitle: "info@3strands.co", color: Theme.primary, urlString: "mailto:info@3strands.co")
                 linkButton(icon: "phone.fill", title: "Call Us", subtitle: "(863) 799-3300", color: Theme.forestGreen, urlString: "tel:8637993300")
-                linkButton(icon: "shippingbox.fill", title: "Track Your Order", subtitle: "Via Square Online", color: Theme.gold, urlString: "https://3strandsbeef.com")
             }
             .padding(.horizontal, Theme.screenPadding)
         }

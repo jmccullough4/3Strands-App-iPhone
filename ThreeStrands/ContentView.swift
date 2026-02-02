@@ -38,5 +38,8 @@ struct ContentView: View {
                 .tag(4)
         }
         .tint(Theme.primary)
+        .task {
+            await store.refreshSales()
+        }
     }
 }

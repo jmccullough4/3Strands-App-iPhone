@@ -5,7 +5,8 @@ import SwiftUI
 
 @MainActor
 class SaleStore: ObservableObject {
-    @Published var sales: [FlashSale] = FlashSale.samples
+    @Published var sales: [FlashSale] = []
+    @Published var isLoading = false
     @Published var notificationPrefs: NotificationPreferences
 
     private let prefsKey = NotificationPreferences.storageKey
@@ -35,14 +36,13 @@ class SaleStore: ObservableObject {
     }
 
     func refreshSales() async {
+        isLoading = sales.isEmpty
         do {
             let fetched = try await APIService.shared.fetchFlashSales()
-            if !fetched.isEmpty {
-                sales = fetched
-            }
+            sales = fetched
         } catch {
-            // Keep existing data (samples) if network fails
             print("Flash sales fetch failed: \(error.localizedDescription)")
         }
+        isLoading = false
     }
 }

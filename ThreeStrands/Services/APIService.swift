@@ -42,8 +42,23 @@ class APIService {
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw APIError.serverError
         }
+        // Dashboard returns {"error": "..."} when Square isn't configured
+        if let errorResp = try? decoder.decode(APIErrorResponse.self, from: data), errorResp.error != nil {
+            throw APIError.catalogNotConfigured
+        }
         let wrapper = try decoder.decode(CatalogResponse.self, from: data)
         return wrapper.groupedItems
+    }
+
+    // MARK: - Pop-Up Sales
+
+    func fetchPopUpSales() async throws -> [PopUpSale] {
+        let url = URL(string: "\(baseURL)/api/public/pop-up-sales")!
+        let (data, response) = try await session.data(from: url)
+        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+            throw APIError.serverError
+        }
+        return try decoder.decode([PopUpSale].self, from: data)
     }
 
     // MARK: - Device Registration
@@ -67,13 +82,19 @@ class APIService {
 enum APIError: LocalizedError {
     case serverError
     case decodingError
+    case catalogNotConfigured
 
     var errorDescription: String? {
         switch self {
         case .serverError: return "Unable to reach the server. Please try again."
         case .decodingError: return "Unexpected response from server."
+        case .catalogNotConfigured: return "Menu is being set up. Check back soon!"
         }
     }
+}
+
+struct APIErrorResponse: Codable {
+    let error: String?
 }
 
 // MARK: - Flash Sale API Model
@@ -202,4 +223,18 @@ struct CatalogVariation: Identifiable, Codable {
         guard let cents = priceCents else { return "Market Price" }
         return String(format: "$%.2f", Double(cents) / 100.0)
     }
+}
+
+// MARK: - Pop-Up Sale Model
+
+struct PopUpSale: Identifiable, Codable {
+    let id: String
+    let title: String
+    let description: String?
+    let address: String?
+    let latitude: Double
+    let longitude: Double
+    let startsAt: String?
+    let endsAt: String?
+    let isActive: Bool
 }
