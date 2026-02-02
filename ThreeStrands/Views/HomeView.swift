@@ -137,44 +137,53 @@ struct HomeView: View {
                 .padding(.horizontal, Theme.screenPadding)
 
             VStack(spacing: 10) {
-                linkRow(icon: "globe", title: "Visit Our Website", subtitle: "3strandsbeef.com", color: Theme.forestGreen)
-                linkRow(icon: "envelope.fill", title: "Email Us", subtitle: "info@3strands.co", color: Theme.primary)
-                linkRow(icon: "phone.fill", title: "Call Us", subtitle: "(863) 799-3300", color: Theme.forestGreen)
-                linkRow(icon: "shippingbox.fill", title: "Track Your Order", subtitle: "Via Square Online", color: Theme.gold)
+                linkButton(icon: "globe", title: "Visit Our Website", subtitle: "3strandsbeef.com", color: Theme.forestGreen, urlString: "https://3strandsbeef.com")
+                linkButton(icon: "envelope.fill", title: "Email Us", subtitle: "info@3strands.co", color: Theme.primary, urlString: "mailto:info@3strands.co")
+                linkButton(icon: "phone.fill", title: "Call Us", subtitle: "(863) 799-3300", color: Theme.forestGreen, urlString: "tel:8637993300")
+                linkButton(icon: "shippingbox.fill", title: "Track Your Order", subtitle: "Via Square Online", color: Theme.gold, urlString: "https://3strandsbeef.com")
             }
             .padding(.horizontal, Theme.screenPadding)
         }
     }
 
-    private func linkRow(icon: String, title: String, subtitle: String, color: Color) -> some View {
-        HStack(spacing: 14) {
-            Image(systemName: icon)
-                .font(.system(size: 20))
-                .foregroundColor(color)
-                .frame(width: 40, height: 40)
-                .background(color.opacity(0.1))
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+    @Environment(\.openURL) private var openURL
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundColor(Theme.textPrimary)
-                Text(subtitle)
-                    .font(Theme.captionFont)
-                    .foregroundColor(Theme.textSecondary)
+    private func linkButton(icon: String, title: String, subtitle: String, color: Color, urlString: String) -> some View {
+        Button {
+            if let url = URL(string: urlString) {
+                openURL(url)
             }
+        } label: {
+            HStack(spacing: 14) {
+                Image(systemName: icon)
+                    .font(.system(size: 20))
+                    .foregroundColor(color)
+                    .frame(width: 40, height: 40)
+                    .background(color.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
 
-            Spacer()
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundColor(Theme.textPrimary)
+                    Text(subtitle)
+                        .font(Theme.captionFont)
+                        .foregroundColor(Theme.textSecondary)
+                }
 
-            Image(systemName: "chevron.right")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(Theme.textSecondary.opacity(0.5))
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(Theme.textSecondary.opacity(0.5))
+            }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.cornerRadius)
+                    .fill(Theme.cardBackground)
+                    .shadow(color: .black.opacity(0.04), radius: 6, y: 3)
+            )
         }
-        .padding(14)
-        .background(
-            RoundedRectangle(cornerRadius: Theme.cornerRadius)
-                .fill(Theme.cardBackground)
-                .shadow(color: .black.opacity(0.04), radius: 6, y: 3)
-        )
+        .buttonStyle(.plain)
     }
 }

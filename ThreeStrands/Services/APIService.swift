@@ -8,7 +8,7 @@ class APIService {
 
     // Base URL for the dashboard backend - update this to your server's address
     var baseURL: String {
-        UserDefaults.standard.string(forKey: "api_base_url") ?? "https://dashboard.3strandsbeef.com"
+        UserDefaults.standard.string(forKey: "api_base_url") ?? "https://dashboard.3strands.co"
     }
 
     private let session: URLSession
