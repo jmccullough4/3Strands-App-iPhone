@@ -63,7 +63,7 @@ struct HomeView: View {
     private var heroBanner: some View {
         ZStack {
             LinearGradient(
-                colors: [Theme.forestGreen, Theme.forestGreen.opacity(0.85)],
+                colors: [Theme.primary, Theme.primary.opacity(0.85)],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -87,7 +87,7 @@ struct HomeView: View {
                 if !store.activeSales.isEmpty {
                     Text("\(store.activeSales.count) Flash Sale\(store.activeSales.count == 1 ? "" : "s") Live Now")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(Theme.forestGreen)
+                        .foregroundColor(Theme.primary)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
                         .background(

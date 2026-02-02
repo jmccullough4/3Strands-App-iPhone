@@ -3,7 +3,7 @@ import SwiftUI
 struct LaunchScreenView: View {
     var body: some View {
         ZStack {
-            Theme.forestGreen
+            Theme.primary
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
