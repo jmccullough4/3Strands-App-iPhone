@@ -2,10 +2,9 @@ import SwiftUI
 import MapKit
 
 struct PopUpSaleView: View {
-    @State private var events: [PopUpEvent] = []
+    @State private var sales: [PopUpSale] = []
     @State private var isLoading = true
     @State private var errorMessage: String?
-    @State private var selectedEvent: PopUpEvent?
 
     var body: some View {
         NavigationStack {
@@ -23,14 +22,14 @@ struct PopUpSaleView: View {
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
                         Button("Try Again") {
-                            Task { await loadEvents() }
+                            Task { await loadSales() }
                         }
                         .buttonStyle(.borderedProminent)
                         .tint(Theme.primary)
                     }
                     .padding()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if events.isEmpty {
+                } else if sales.isEmpty {
                     VStack(spacing: 16) {
                         Image(systemName: "mappin.and.ellipse")
                             .font(.system(size: 40))
@@ -43,8 +42,8 @@ struct PopUpSaleView: View {
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
-                    List(events) { event in
-                        PopUpEventRow(event: event)
+                    List(sales) { sale in
+                        PopUpSaleRow(sale: sale)
                     }
                     .listStyle(.insetGrouped)
                 }
@@ -52,21 +51,22 @@ struct PopUpSaleView: View {
             .background(Theme.background)
             .navigationTitle("Pop-Up Sales")
             .refreshable {
-                await loadEvents()
+                await loadSales()
             }
         }
         .task {
-            await loadEvents()
+            await loadSales()
         }
     }
 
-    private func loadEvents() async {
-        isLoading = events.isEmpty
+    private func loadSales() async {
+        isLoading = sales.isEmpty
         errorMessage = nil
         do {
-            events = try await APIService.shared.fetchPopUpEvents()
+            sales = try await APIService.shared.fetchPopUpSales()
         } catch {
-            if events.isEmpty {
+            print("Pop-up sales fetch error: \(error)")
+            if sales.isEmpty {
                 errorMessage = error.localizedDescription
             }
         }
@@ -74,16 +74,16 @@ struct PopUpSaleView: View {
     }
 }
 
-// MARK: - Pop-Up Event Row
+// MARK: - Pop-Up Sale Row
 
-struct PopUpEventRow: View {
-    let event: PopUpEvent
+struct PopUpSaleRow: View {
+    let sale: PopUpSale
     @Environment(\.openURL) private var openURL
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 12) {
-                Image(systemName: event.icon ?? "leaf.fill")
+                Image(systemName: "mappin.circle.fill")
                     .font(.system(size: 24))
                     .foregroundColor(Theme.primary)
                     .frame(width: 40, height: 40)
@@ -91,11 +91,11 @@ struct PopUpEventRow: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(event.title)
+                    Text(sale.title)
                         .font(.headline)
                         .foregroundColor(Theme.primary)
 
-                    if let dateStr = event.date {
+                    if let dateStr = sale.startsAt {
                         Text(formatDate(dateStr))
                             .font(.caption)
                             .foregroundColor(Theme.gold)
@@ -105,9 +105,17 @@ struct PopUpEventRow: View {
                 Spacer()
             }
 
-            Text(event.location)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+            if let address = sale.address, !address.isEmpty {
+                Text(address)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+
+            if let desc = sale.description, !desc.isEmpty {
+                Text(desc)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
 
             HStack(spacing: 12) {
                 Button {
@@ -140,7 +148,16 @@ struct PopUpEventRow: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
         formatter.timeZone = TimeZone(identifier: "UTC")
-        guard let date = formatter.date(from: isoString) else { return isoString }
+        guard let date = formatter.date(from: isoString) else {
+            // Try with Z suffix
+            let iso = ISO8601DateFormatter()
+            iso.formatOptions = [.withInternetDateTime]
+            guard let date = iso.date(from: isoString) else { return isoString }
+            let display = DateFormatter()
+            display.dateStyle = .medium
+            display.timeStyle = .short
+            return display.string(from: date)
+        }
         let display = DateFormatter()
         display.dateStyle = .medium
         display.timeStyle = .short
@@ -148,15 +165,15 @@ struct PopUpEventRow: View {
     }
 
     private func openInAppleMaps() {
-        let query = event.location.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        if let url = URL(string: "maps://?q=\(query)") {
+        let urlStr = "maps://?ll=\(sale.latitude),\(sale.longitude)&q=\(sale.title.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+        if let url = URL(string: urlStr) {
             openURL(url)
         }
     }
 
     private func openInGoogleMaps() {
-        let query = event.location.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        if let url = URL(string: "https://www.google.com/maps/search/?api=1&query=\(query)") {
+        let urlStr = "https://www.google.com/maps/search/?api=1&query=\(sale.latitude),\(sale.longitude)"
+        if let url = URL(string: urlStr) {
             openURL(url)
         }
     }
