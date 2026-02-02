@@ -35,9 +35,9 @@ struct MenuView: View {
                         Image(systemName: "storefront")
                             .font(.system(size: 40))
                             .foregroundColor(Theme.primary)
-                        Text("Menu coming soon!")
+                        Text("No menu items yet")
                             .font(.headline)
-                        Text("Check back for our latest cuts and bundles.")
+                        Text("Pull down to refresh, or check back soon.")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
@@ -65,9 +65,8 @@ struct MenuView: View {
         do {
             items = try await APIService.shared.fetchCatalog()
         } catch {
-            if items.isEmpty {
-                errorMessage = error.localizedDescription
-            }
+            errorMessage = error.localizedDescription
+            print("Catalog fetch error: \(error)")
         }
         isLoading = false
     }
