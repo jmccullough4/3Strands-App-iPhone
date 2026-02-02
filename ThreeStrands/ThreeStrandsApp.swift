@@ -8,25 +8,61 @@ struct ThreeStrandsApp: App {
     @AppStorage("has_completed_onboarding") private var hasCompletedOnboarding = false
     @State private var isLaunching = true
 
+    init() {
+        // Force light mode and set navigation bar appearance
+        let navAppearance = UINavigationBarAppearance()
+        navAppearance.configureWithOpaqueBackground()
+        navAppearance.backgroundColor = UIColor(Theme.background)
+        navAppearance.largeTitleTextAttributes = [
+            .foregroundColor: UIColor(Theme.primary)
+        ]
+        navAppearance.titleTextAttributes = [
+            .foregroundColor: UIColor(Theme.primary)
+        ]
+        UINavigationBar.appearance().standardAppearance = navAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
+        UINavigationBar.appearance().compactAppearance = navAppearance
+        UINavigationBar.appearance().tintColor = UIColor(Theme.primary)
+    }
+
     var body: some Scene {
         WindowGroup {
-            if isLaunching {
-                LaunchScreenView()
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                            withAnimation(.easeOut(duration: 0.4)) {
-                                isLaunching = false
+            Group {
+                if isLaunching {
+                    LaunchScreenView()
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                                withAnimation(.easeOut(duration: 0.4)) {
+                                    isLaunching = false
+                                }
                             }
                         }
-                    }
-            } else if hasCompletedOnboarding {
-                ContentView()
-                    .environmentObject(store)
-                    .environmentObject(notificationService)
-            } else {
-                OnboardingView(hasCompletedOnboarding: $hasCompletedOnboarding)
-                    .environmentObject(notificationService)
+                } else if hasCompletedOnboarding {
+                    ContentView()
+                        .environmentObject(store)
+                        .environmentObject(notificationService)
+                } else {
+                    OnboardingView(hasCompletedOnboarding: $hasCompletedOnboarding)
+                        .environmentObject(notificationService)
+                }
             }
+            .preferredColorScheme(.light)
+            .task {
+                await registerDeviceIfNeeded()
+            }
+        }
+    }
+
+    private func registerDeviceIfNeeded() async {
+        let key = "device_registered"
+        guard !UserDefaults.standard.bool(forKey: key) else { return }
+        // Use a unique device identifier as the token for anonymous registration
+        let deviceId = UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString
+        do {
+            try await APIService.shared.registerDevice(token: deviceId)
+            UserDefaults.standard.set(true, forKey: key)
+        } catch {
+            print("Device registration failed: \(error.localizedDescription)")
         }
     }
 }

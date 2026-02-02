@@ -59,7 +59,7 @@ struct SaleDetailView: View {
 
                         Text(sale.title)
                             .font(Theme.heroFont)
-                            .foregroundColor(Theme.textPrimary)
+                            .foregroundColor(Theme.primary)
                     }
 
                     // Price card

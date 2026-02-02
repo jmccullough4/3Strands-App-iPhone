@@ -49,6 +49,7 @@ struct PopUpSaleView: View {
                     .listStyle(.insetGrouped)
                 }
             }
+            .background(Theme.background)
             .navigationTitle("Pop-Up Sales")
             .refreshable {
                 await loadEvents()

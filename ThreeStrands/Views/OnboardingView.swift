@@ -145,7 +145,7 @@ struct OnboardingView: View {
 
             Text(title)
                 .font(Theme.heroFont)
-                .foregroundColor(Theme.textPrimary)
+                .foregroundColor(Theme.primary)
                 .multilineTextAlignment(.center)
 
             Text(subtitle)

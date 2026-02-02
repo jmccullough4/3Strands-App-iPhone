@@ -19,7 +19,7 @@ struct HomeView: View {
                                     .foregroundColor(Theme.gold)
                                 Text("Live Flash Sales")
                                     .font(Theme.headingFont)
-                                    .foregroundColor(Theme.textPrimary)
+                                    .foregroundColor(Theme.primary)
                                 Spacer()
                                 Text("\(store.activeSales.count) active")
                                     .font(Theme.captionFont)
@@ -119,7 +119,7 @@ struct HomeView: View {
                             .foregroundColor(Theme.gold)
                         Text("Pop-Up Sales")
                             .font(Theme.headingFont)
-                            .foregroundColor(Theme.textPrimary)
+                            .foregroundColor(Theme.primary)
                         Spacer()
                     }
                     .padding(.horizontal, Theme.screenPadding)
@@ -181,7 +181,7 @@ struct HomeView: View {
         VStack(spacing: 20) {
             Text("Our Mission")
                 .font(Theme.headingFont)
-                .foregroundColor(Theme.textPrimary)
+                .foregroundColor(Theme.primary)
 
             VStack(alignment: .leading, spacing: 16) {
                 Text("Our mission is simple: glorify God through honest business, support local farmers, and provide your family with beef you can trust. Every cut is traceable, every relationship is stewarded with integrity, and a portion of every sale supports local food banks and ministries.")
@@ -205,7 +205,7 @@ struct HomeView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Quick Links")
                 .font(Theme.headingFont)
-                .foregroundColor(Theme.textPrimary)
+                .foregroundColor(Theme.primary)
                 .padding(.horizontal, Theme.screenPadding)
 
             VStack(spacing: 10) {

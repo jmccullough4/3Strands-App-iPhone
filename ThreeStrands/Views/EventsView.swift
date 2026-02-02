@@ -141,7 +141,7 @@ struct EventsView: View {
         return VStack(alignment: .leading, spacing: 12) {
             Text(selectedDate.formatted(.dateTime.weekday(.wide).month(.wide).day()))
                 .font(Theme.headingFont)
-                .foregroundColor(Theme.textPrimary)
+                .foregroundColor(Theme.primary)
                 .padding(.horizontal, Theme.screenPadding)
 
             if dayEvents.isEmpty {
