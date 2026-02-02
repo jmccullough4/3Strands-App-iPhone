@@ -80,8 +80,15 @@ class APIService {
             "device_name": DeviceIdentifier.deviceName
         ]
         request.httpBody = try JSONEncoder().encode(body)
-        let (_, response) = try await session.data(for: request)
-        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+        print("Register device request: token=\(token.prefix(20))..., device_id=\(DeviceIdentifier.persistentID), device_name=\(DeviceIdentifier.deviceName)")
+        let (data, response) = try await session.data(for: request)
+        if let http = response as? HTTPURLResponse {
+            let responseBody = String(data: data, encoding: .utf8) ?? "nil"
+            print("Register device response: \(http.statusCode) - \(responseBody)")
+            guard http.statusCode == 200 else {
+                throw APIError.serverError
+            }
+        } else {
             throw APIError.serverError
         }
     }
