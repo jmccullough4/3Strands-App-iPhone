@@ -93,7 +93,7 @@ struct PopUpEventRow: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(event.title)
                         .font(.headline)
-                        .foregroundColor(Theme.textPrimary)
+                        .foregroundColor(Theme.primary)
 
                     if let dateStr = event.date {
                         Text(formatDate(dateStr))
