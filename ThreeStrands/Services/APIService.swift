@@ -19,8 +19,8 @@ class APIService {
         config.timeoutIntervalForResource = 30
         self.session = URLSession(configuration: config)
 
+        // Dashboard to_dict() sends camelCase keys, so use default decoding (no convertFromSnakeCase)
         self.decoder = JSONDecoder()
-        self.decoder.keyDecodingStrategy = .convertFromSnakeCase
     }
 
     // MARK: - Flash Sales
@@ -31,6 +31,7 @@ class APIService {
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw APIError.serverError
         }
+        print("Flash sales raw: \(String(data: data, encoding: .utf8) ?? "nil")")
         let apiSales = try decoder.decode([APIFlashSale].self, from: data)
         return apiSales.map { $0.toFlashSale() }
     }
@@ -43,6 +44,7 @@ class APIService {
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw APIError.serverError
         }
+        print("Catalog raw: \(String(data: data, encoding: .utf8) ?? "nil")")
         let wrapper = try decoder.decode(CatalogResponse.self, from: data)
         if wrapper.items.isEmpty && wrapper.source == "unavailable" {
             throw APIError.catalogNotConfigured
@@ -50,15 +52,16 @@ class APIService {
         return wrapper.items
     }
 
-    // MARK: - Pop-Up Events
+    // MARK: - Pop-Up Sales
 
-    func fetchPopUpEvents() async throws -> [PopUpEvent] {
-        let url = URL(string: "\(baseURL)/api/public/events")!
+    func fetchPopUpSales() async throws -> [PopUpSale] {
+        let url = URL(string: "\(baseURL)/api/public/pop-up-sales")!
         let (data, response) = try await session.data(from: url)
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw APIError.serverError
         }
-        return try decoder.decode([PopUpEvent].self, from: data)
+        print("Pop-up sales raw: \(String(data: data, encoding: .utf8) ?? "nil")")
+        return try decoder.decode([PopUpSale].self, from: data)
     }
 
     // MARK: - Device Registration
@@ -94,11 +97,11 @@ enum APIError: LocalizedError {
 }
 
 // MARK: - Flash Sale API Model
-// Dashboard sends snake_case keys: id (int), title, description, cut_type,
-// original_price, sale_price, weight_lbs, image_system_name, is_active, starts_at, expires_at
+// Dashboard to_dict() sends camelCase: id (string), title, description, cutType,
+// originalPrice, salePrice, weightLbs, imageSystemName, isActive, startsAt, expiresAt
 
 struct APIFlashSale: Codable {
-    let id: Int
+    let id: String
     let title: String
     let description: String
     let cutType: String
@@ -124,7 +127,7 @@ struct APIFlashSale: Codable {
         }
 
         return FlashSale(
-            id: String(id),
+            id: id,
             title: title,
             description: description,
             cutType: CutType(rawValue: cutType) ?? .custom,
@@ -179,17 +182,18 @@ struct CatalogVariation: Identifiable, Codable {
     }
 }
 
-// MARK: - Pop-Up Event Model
-// Dashboard sends: {id, title, location, date, end_date, icon, is_recurring, recurrence_rule, is_active}
+// MARK: - Pop-Up Sale Model
+// Dashboard to_dict() sends camelCase: id (string), title, description, address,
+// latitude, longitude, startsAt, endsAt, isActive
 
-struct PopUpEvent: Identifiable, Codable {
-    let id: Int
+struct PopUpSale: Identifiable, Codable {
+    let id: String
     let title: String
-    let location: String
-    let date: String?
-    let endDate: String?
-    let icon: String?
-    let isRecurring: Bool?
-    let recurrenceRule: String?
+    let description: String?
+    let address: String?
+    let latitude: Double
+    let longitude: Double
+    let startsAt: String?
+    let endsAt: String?
     let isActive: Bool
 }

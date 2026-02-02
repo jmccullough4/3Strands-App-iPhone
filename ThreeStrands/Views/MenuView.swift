@@ -35,11 +35,21 @@ struct MenuView: View {
                         Image(systemName: "storefront")
                             .font(.system(size: 40))
                             .foregroundColor(Theme.primary)
-                        Text("No menu items yet")
+                        Text("Menu Coming Soon")
                             .font(.headline)
-                        Text("Pull down to refresh, or check back soon.")
+                            .foregroundColor(Theme.primary)
+                        Text("Our full menu with prices is on the way.\nIn the meantime, browse our website!")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                        Link(destination: URL(string: "https://3strandsbeef.com")!) {
+                            Label("Shop on Our Website", systemImage: "globe")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 12)
+                                .background(Capsule().fill(Theme.forestGreen))
+                        }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -65,6 +75,10 @@ struct MenuView: View {
         errorMessage = nil
         do {
             items = try await APIService.shared.fetchCatalog()
+        } catch APIError.catalogNotConfigured {
+            // Show the empty/coming soon state, not an error
+            items = []
+            print("Catalog not configured yet")
         } catch {
             errorMessage = error.localizedDescription
             print("Catalog fetch error: \(error)")
