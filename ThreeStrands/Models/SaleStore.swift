@@ -35,13 +35,14 @@ class SaleStore: ObservableObject {
     }
 
     func refreshSales() async {
-        // In production, this would fetch from a backend API:
-        // let url = URL(string: "https://api.threestrandscattle.com/flash-sales")!
-        // let (data, _) = try await URLSession.shared.data(from: url)
-        // self.sales = try JSONDecoder().decode([FlashSale].self, from: data)
-
-        // For now, simulate a network refresh
-        try? await Task.sleep(nanoseconds: 800_000_000)
-        sales = FlashSale.samples
+        do {
+            let fetched = try await APIService.shared.fetchFlashSales()
+            if !fetched.isEmpty {
+                sales = fetched
+            }
+        } catch {
+            // Keep existing data (samples) if network fails
+            print("Flash sales fetch failed: \(error.localizedDescription)")
+        }
     }
 }

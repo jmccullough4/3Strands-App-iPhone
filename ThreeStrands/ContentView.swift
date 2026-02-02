@@ -12,24 +12,30 @@ struct ContentView: View {
                 }
                 .tag(0)
 
+            MenuView()
+                .tabItem {
+                    Label("Menu", systemImage: "menucard")
+                }
+                .tag(1)
+
             FlashSalesView()
                 .tabItem {
                     Label("Flash Sales", systemImage: "bolt.fill")
                 }
-                .tag(1)
+                .tag(2)
                 .badge(store.activeSales.count)
 
             EventsView()
                 .tabItem {
                     Label("Events", systemImage: "calendar")
                 }
-                .tag(2)
+                .tag(3)
 
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")
                 }
-                .tag(3)
+                .tag(4)
         }
         .tint(Theme.primary)
     }
