@@ -53,7 +53,7 @@ struct EventsView: View {
 
                 Text(displayedMonth.formatted(.dateTime.month(.wide).year()))
                     .font(.system(size: 18, weight: .semibold, design: .serif))
-                    .foregroundColor(Theme.textPrimary)
+                    .foregroundColor(Theme.primary)
 
                 Spacer()
 
@@ -181,7 +181,7 @@ struct EventsView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(event.title)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(Theme.textPrimary)
+                    .foregroundColor(Theme.primary)
 
                 HStack(spacing: 4) {
                     Image(systemName: "clock")

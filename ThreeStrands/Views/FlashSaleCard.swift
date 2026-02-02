@@ -23,7 +23,7 @@ struct FlashSaleCard: View {
                         .foregroundColor(Theme.textSecondary)
                     Text(sale.title)
                         .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(Theme.textPrimary)
+                        .foregroundColor(Theme.primary)
                         .lineLimit(isCompact ? 1 : 2)
                 }
 

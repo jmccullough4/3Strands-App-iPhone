@@ -137,7 +137,7 @@ struct HomeView: View {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(event.title)
                                         .font(.system(size: 15, weight: .semibold))
-                                        .foregroundColor(Theme.textPrimary)
+                                        .foregroundColor(Theme.primary)
                                     Text(event.location)
                                         .font(Theme.captionFont)
                                         .foregroundColor(Theme.textSecondary)
@@ -236,7 +236,7 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
                         .font(.system(size: 15, weight: .medium))
-                        .foregroundColor(Theme.textPrimary)
+                        .foregroundColor(Theme.primary)
                     Text(subtitle)
                         .font(Theme.captionFont)
                         .foregroundColor(Theme.textSecondary)

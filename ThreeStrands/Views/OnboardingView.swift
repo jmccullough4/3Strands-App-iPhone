@@ -24,7 +24,7 @@ struct OnboardingView: View {
 
                         Text("Welcome to\n3 Strands Cattle Co.")
                             .font(Theme.heroFont)
-                            .foregroundColor(Theme.textPrimary)
+                            .foregroundColor(Theme.primary)
                             .multilineTextAlignment(.center)
 
                         Text("Veteran owned. Faith driven.\nFlorida sourced.")
@@ -68,7 +68,7 @@ struct OnboardingView: View {
 
                         Text("Never Miss a Deal")
                             .font(Theme.heroFont)
-                            .foregroundColor(Theme.textPrimary)
+                            .foregroundColor(Theme.primary)
                             .multilineTextAlignment(.center)
 
                         Text("Enable push notifications to get alerted the moment a flash sale drops.")
