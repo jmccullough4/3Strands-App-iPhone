@@ -62,12 +62,12 @@ struct ThreeStrandsApp: App {
     }
 
     private func registerDeviceIfNeeded() async {
-        let key = "device_registered"
-        guard !UserDefaults.standard.bool(forKey: key) else { return }
-        let deviceId = UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString
+        // Use the persistent Keychain device ID as the token for initial registration.
+        // The real APNs token is sent separately via NotificationService when push is authorized.
+        let deviceId = DeviceIdentifier.persistentID
         do {
             try await APIService.shared.registerDevice(token: deviceId)
-            UserDefaults.standard.set(true, forKey: key)
+            print("Device registered with persistent ID: \(deviceId)")
         } catch {
             print("Device registration failed: \(error.localizedDescription)")
         }
