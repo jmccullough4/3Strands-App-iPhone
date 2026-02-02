@@ -49,6 +49,7 @@ struct MenuView: View {
                     .listStyle(.insetGrouped)
                 }
             }
+            .background(Theme.background)
             .navigationTitle("Our Menu")
             .refreshable {
                 await loadCatalog()
