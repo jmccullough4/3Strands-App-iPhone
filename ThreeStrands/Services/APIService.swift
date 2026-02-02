@@ -128,16 +128,25 @@ struct APIFlashSale: Codable {
     let isActive: Bool
 
     func toFlashSale() -> FlashSale {
+        // Dashboard stores times as entered (local time) without timezone info.
+        // Parse bare timestamps as local timezone so expiration logic works correctly.
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-        formatter.timeZone = TimeZone(identifier: "UTC")
+        formatter.timeZone = .current
+
+        // Also handle fractional seconds (e.g. created_at has microseconds)
+        let fractionalFormatter = DateFormatter()
+        fractionalFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+        fractionalFormatter.timeZone = .current
 
         let iso = ISO8601DateFormatter()
         iso.formatOptions = [.withInternetDateTime]
 
         func parseDate(_ s: String?) -> Date? {
             guard let s else { return nil }
-            return formatter.date(from: s) ?? iso.date(from: s)
+            return formatter.date(from: s)
+                ?? fractionalFormatter.date(from: s)
+                ?? iso.date(from: s)
         }
 
         return FlashSale(
