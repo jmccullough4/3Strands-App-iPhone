@@ -32,6 +32,7 @@ struct EventsView: View {
             }
             .background(Theme.background)
             .navigationTitle("Events")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 

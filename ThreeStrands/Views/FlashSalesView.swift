@@ -67,6 +67,7 @@ struct FlashSalesView: View {
             }
             .background(Theme.background)
             .navigationTitle("Flash Sales")
+            .navigationBarTitleDisplayMode(.inline)
             .refreshable {
                 await store.refreshSales()
             }

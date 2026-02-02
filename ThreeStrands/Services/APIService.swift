@@ -6,68 +6,68 @@ import Foundation
 class APIService {
     static let shared = APIService()
 
-    var baseURL: String {
+    var dashboardURL: String {
         UserDefaults.standard.string(forKey: "api_base_url") ?? "https://dashboard.3strands.co"
     }
 
+    let websiteURL = "https://3strands.co"
+
     private let session: URLSession
-    private let decoder: JSONDecoder
 
     init() {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 15
         config.timeoutIntervalForResource = 30
         self.session = URLSession(configuration: config)
-
-        // Dashboard to_dict() sends camelCase keys, so use default decoding (no convertFromSnakeCase)
-        self.decoder = JSONDecoder()
     }
 
-    // MARK: - Flash Sales
+    // MARK: - Flash Sales (from dashboard — snake_case JSON)
 
     func fetchFlashSales() async throws -> [FlashSale] {
-        let url = URL(string: "\(baseURL)/api/public/flash-sales")!
+        let url = URL(string: "\(dashboardURL)/api/public/flash-sales")!
         let (data, response) = try await session.data(from: url)
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw APIError.serverError
         }
         print("Flash sales raw: \(String(data: data, encoding: .utf8) ?? "nil")")
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
         let apiSales = try decoder.decode([APIFlashSale].self, from: data)
         return apiSales.map { $0.toFlashSale() }
     }
 
-    // MARK: - Catalog / Menu
+    // MARK: - Catalog / Menu (from main website — camelCase JSON)
 
     func fetchCatalog() async throws -> [CatalogItem] {
-        let url = URL(string: "\(baseURL)/api/public/catalog")!
+        let url = URL(string: "\(websiteURL)/api/catalog")!
         let (data, response) = try await session.data(from: url)
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw APIError.serverError
         }
-        print("Catalog raw: \(String(data: data, encoding: .utf8) ?? "nil")")
+        print("Catalog raw (first 500): \(String(data: data.prefix(500), encoding: .utf8) ?? "nil")")
+        let decoder = JSONDecoder()
         let wrapper = try decoder.decode(CatalogResponse.self, from: data)
-        if wrapper.items.isEmpty && wrapper.source == "unavailable" {
-            throw APIError.catalogNotConfigured
-        }
         return wrapper.items
     }
 
-    // MARK: - Pop-Up Sales
+    // MARK: - Pop-Up Sales (from dashboard — snake_case JSON)
 
     func fetchPopUpSales() async throws -> [PopUpSale] {
-        let url = URL(string: "\(baseURL)/api/public/pop-up-sales")!
+        let url = URL(string: "\(dashboardURL)/api/public/pop-up-sales")!
         let (data, response) = try await session.data(from: url)
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw APIError.serverError
         }
         print("Pop-up sales raw: \(String(data: data, encoding: .utf8) ?? "nil")")
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
         return try decoder.decode([PopUpSale].self, from: data)
     }
 
-    // MARK: - Device Registration
+    // MARK: - Device Registration (to dashboard)
 
     func registerDevice(token: String) async throws {
-        let url = URL(string: "\(baseURL)/api/public/register-device")!
+        let url = URL(string: "\(dashboardURL)/api/public/register-device")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -97,11 +97,11 @@ enum APIError: LocalizedError {
 }
 
 // MARK: - Flash Sale API Model
-// Dashboard to_dict() sends camelCase: id (string), title, description, cutType,
-// originalPrice, salePrice, weightLbs, imageSystemName, isActive, startsAt, expiresAt
+// Dashboard sends snake_case: id (int), title, description, cut_type,
+// original_price, sale_price, weight_lbs, image_system_name, is_active, starts_at, expires_at
 
 struct APIFlashSale: Codable {
-    let id: String
+    let id: Int
     let title: String
     let description: String
     let cutType: String
@@ -127,7 +127,7 @@ struct APIFlashSale: Codable {
         }
 
         return FlashSale(
-            id: id,
+            id: String(id),
             title: title,
             description: description,
             cutType: CutType(rawValue: cutType) ?? .custom,
@@ -143,11 +143,11 @@ struct APIFlashSale: Codable {
 }
 
 // MARK: - Catalog API Models
-// Dashboard sends: {"items": [{id, name, description, category, variations: [{id, name, price_cents}]}], "source": "square"}
+// Website 3strands.co/api/catalog sends camelCase:
+// {items: [{id, name, description, category, variations: [{id, name, priceMoney: {amount, currency}, pricingType}]}]}
 
 struct CatalogResponse: Codable {
     let items: [CatalogItem]
-    let source: String
 }
 
 struct CatalogItem: Identifiable, Codable {
@@ -158,7 +158,7 @@ struct CatalogItem: Identifiable, Codable {
     let variations: [CatalogVariation]
 
     var lowestPrice: Int? {
-        variations.compactMap { $0.priceCents }.min()
+        variations.compactMap { $0.priceMoney?.amount }.min()
     }
 
     var formattedPrice: String {
@@ -174,20 +174,26 @@ struct CatalogItem: Identifiable, Codable {
 struct CatalogVariation: Identifiable, Codable {
     let id: String
     let name: String
-    let priceCents: Int?
+    let priceMoney: PriceMoney?
+    let pricingType: String?
 
     var formattedPrice: String {
-        guard let cents = priceCents else { return "Market Price" }
+        guard let cents = priceMoney?.amount else { return "Market Price" }
         return String(format: "$%.2f", Double(cents) / 100.0)
     }
 }
 
+struct PriceMoney: Codable {
+    let amount: Int
+    let currency: String
+}
+
 // MARK: - Pop-Up Sale Model
-// Dashboard to_dict() sends camelCase: id (string), title, description, address,
-// latitude, longitude, startsAt, endsAt, isActive
+// Dashboard sends snake_case: id (int), title, description, address,
+// latitude, longitude, starts_at, ends_at, is_active
 
 struct PopUpSale: Identifiable, Codable {
-    let id: String
+    let id: Int
     let title: String
     let description: String?
     let address: String?
@@ -196,4 +202,6 @@ struct PopUpSale: Identifiable, Codable {
     let startsAt: String?
     let endsAt: String?
     let isActive: Bool
+
+    var stringId: String { String(id) }
 }

@@ -135,6 +135,7 @@ struct SettingsView: View {
             .scrollContentBackground(.hidden)
             .background(Theme.background)
             .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.inline)
             .alert("Test Sent!", isPresented: $showTestAlert) {
                 Button("OK", role: .cancel) {}
             } message: {

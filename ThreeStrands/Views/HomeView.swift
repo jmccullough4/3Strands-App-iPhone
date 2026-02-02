@@ -54,7 +54,8 @@ struct HomeView: View {
                 .padding(.bottom, 30)
             }
             .background(Theme.background)
-            .navigationBarHidden(true)
+            .navigationTitle("3 Strands Cattle Co.")
+            .navigationBarTitleDisplayMode(.inline)
             .refreshable {
                 await store.refreshSales()
             }
