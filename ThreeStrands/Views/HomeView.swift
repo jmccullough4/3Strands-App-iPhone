@@ -108,11 +108,11 @@ struct HomeView: View {
 
     // MARK: - Pop-Up Sales
 
-    @State private var popUpSales: [PopUpSale] = []
+    @State private var popUpEvents: [PopUpEvent] = []
 
     private var popUpSalesSection: some View {
         Group {
-            if !popUpSales.isEmpty {
+            if !popUpEvents.isEmpty {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Image(systemName: "mappin.and.ellipse")
@@ -124,28 +124,29 @@ struct HomeView: View {
                     }
                     .padding(.horizontal, Theme.screenPadding)
 
-                    ForEach(popUpSales) { sale in
+                    ForEach(popUpEvents) { event in
                         NavigationLink(destination: PopUpSaleView()) {
                             HStack(spacing: 14) {
-                                Image(systemName: "mappin.circle.fill")
-                                    .font(.system(size: 28))
+                                Image(systemName: event.icon ?? "leaf.fill")
+                                    .font(.system(size: 24))
                                     .foregroundColor(Theme.primary)
+                                    .frame(width: 40, height: 40)
+                                    .background(Theme.primary.opacity(0.1))
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
 
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(sale.title)
+                                    Text(event.title)
                                         .font(.system(size: 15, weight: .semibold))
                                         .foregroundColor(Theme.textPrimary)
-                                    if let address = sale.address, !address.isEmpty {
-                                        Text(address)
-                                            .font(Theme.captionFont)
-                                            .foregroundColor(Theme.textSecondary)
-                                            .lineLimit(1)
-                                    }
+                                    Text(event.location)
+                                        .font(Theme.captionFont)
+                                        .foregroundColor(Theme.textSecondary)
+                                        .lineLimit(1)
                                 }
 
                                 Spacer()
 
-                                Text("Get Directions")
+                                Text("Directions")
                                     .font(.caption.weight(.semibold))
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 10)
@@ -167,9 +168,9 @@ struct HomeView: View {
         }
         .task {
             do {
-                popUpSales = try await APIService.shared.fetchPopUpSales()
+                popUpEvents = try await APIService.shared.fetchPopUpEvents()
             } catch {
-                print("Pop-up sales fetch failed: \(error.localizedDescription)")
+                print("Pop-up events fetch failed: \(error.localizedDescription)")
             }
         }
     }

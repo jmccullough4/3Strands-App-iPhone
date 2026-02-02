@@ -6,7 +6,6 @@ import Foundation
 class APIService {
     static let shared = APIService()
 
-    // Base URL for the dashboard backend - update this to your server's address
     var baseURL: String {
         UserDefaults.standard.string(forKey: "api_base_url") ?? "https://dashboard.3strands.co"
     }
@@ -19,7 +18,9 @@ class APIService {
         config.timeoutIntervalForRequest = 15
         config.timeoutIntervalForResource = 30
         self.session = URLSession(configuration: config)
+
         self.decoder = JSONDecoder()
+        self.decoder.keyDecodingStrategy = .convertFromSnakeCase
     }
 
     // MARK: - Flash Sales
@@ -42,23 +43,22 @@ class APIService {
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw APIError.serverError
         }
-        // Dashboard returns {"error": "..."} when Square isn't configured
-        if let errorResp = try? decoder.decode(APIErrorResponse.self, from: data), errorResp.error != nil {
+        let wrapper = try decoder.decode(CatalogResponse.self, from: data)
+        if wrapper.items.isEmpty && wrapper.source == "unavailable" {
             throw APIError.catalogNotConfigured
         }
-        let wrapper = try decoder.decode(CatalogResponse.self, from: data)
-        return wrapper.groupedItems
+        return wrapper.items
     }
 
-    // MARK: - Pop-Up Sales
+    // MARK: - Pop-Up Events
 
-    func fetchPopUpSales() async throws -> [PopUpSale] {
-        let url = URL(string: "\(baseURL)/api/public/pop-up-sales")!
+    func fetchPopUpEvents() async throws -> [PopUpEvent] {
+        let url = URL(string: "\(baseURL)/api/public/events")!
         let (data, response) = try await session.data(from: url)
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw APIError.serverError
         }
-        return try decoder.decode([PopUpSale].self, from: data)
+        return try decoder.decode([PopUpEvent].self, from: data)
     }
 
     // MARK: - Device Registration
@@ -93,18 +93,14 @@ enum APIError: LocalizedError {
     }
 }
 
-struct APIErrorResponse: Codable {
-    let error: String?
-}
-
 // MARK: - Flash Sale API Model
-// Dashboard sends camelCase keys: id (string), title, description, cutType,
-// originalPrice, salePrice, weightLbs, imageSystemName, isActive, startsAt, expiresAt, createdAt
+// Dashboard sends snake_case keys: id (int), title, description, cut_type,
+// original_price, sale_price, weight_lbs, image_system_name, is_active, starts_at, expires_at
 
 struct APIFlashSale: Codable {
-    let id: String
+    let id: Int
     let title: String
-    let description: String?
+    let description: String
     let cutType: String
     let originalPrice: Double
     let salePrice: Double
@@ -115,21 +111,22 @@ struct APIFlashSale: Codable {
     let isActive: Bool
 
     func toFlashSale() -> FlashSale {
-        let iso = ISO8601DateFormatter()
-        iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        formatter.timeZone = TimeZone(identifier: "UTC")
 
-        let iso2 = ISO8601DateFormatter()
-        iso2.formatOptions = [.withInternetDateTime]
+        let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withInternetDateTime]
 
         func parseDate(_ s: String?) -> Date? {
             guard let s else { return nil }
-            return iso.date(from: s) ?? iso2.date(from: s)
+            return formatter.date(from: s) ?? iso.date(from: s)
         }
 
         return FlashSale(
-            id: id,
+            id: String(id),
             title: title,
-            description: description ?? "",
+            description: description,
             cutType: CutType(rawValue: cutType) ?? .custom,
             originalPrice: originalPrice,
             salePrice: salePrice,
@@ -143,54 +140,11 @@ struct APIFlashSale: Codable {
 }
 
 // MARK: - Catalog API Models
-// Dashboard sends: {"items": [...], "count": N}
-// Each item is flat: {id, variationId, name, variationName, description, price, priceCurrency, category, isAvailable}
+// Dashboard sends: {"items": [{id, name, description, category, variations: [{id, name, price_cents}]}], "source": "square"}
 
 struct CatalogResponse: Codable {
-    let items: [APICatalogItem]
-    let count: Int?
-
-    /// Group flat variation rows into CatalogItems
-    var groupedItems: [CatalogItem] {
-        var dict: [String: CatalogItem] = [:]
-        var order: [String] = []
-
-        for item in items {
-            let variation = CatalogVariation(
-                id: item.variationId,
-                name: item.variationName,
-                priceCents: Int(item.price * 100)
-            )
-
-            if var existing = dict[item.id] {
-                existing.variations.append(variation)
-                dict[item.id] = existing
-            } else {
-                order.append(item.id)
-                dict[item.id] = CatalogItem(
-                    id: item.id,
-                    name: item.name,
-                    description: item.description,
-                    category: item.category,
-                    variations: [variation]
-                )
-            }
-        }
-
-        return order.compactMap { dict[$0] }
-    }
-}
-
-struct APICatalogItem: Codable {
-    let id: String
-    let variationId: String
-    let name: String
-    let variationName: String
-    let description: String?
-    let price: Double
-    let priceCurrency: String?
-    let category: String?
-    let isAvailable: Bool?
+    let items: [CatalogItem]
+    let source: String
 }
 
 struct CatalogItem: Identifiable, Codable {
@@ -198,7 +152,7 @@ struct CatalogItem: Identifiable, Codable {
     let name: String
     let description: String?
     let category: String?
-    var variations: [CatalogVariation]
+    let variations: [CatalogVariation]
 
     var lowestPrice: Int? {
         variations.compactMap { $0.priceCents }.min()
@@ -225,16 +179,17 @@ struct CatalogVariation: Identifiable, Codable {
     }
 }
 
-// MARK: - Pop-Up Sale Model
+// MARK: - Pop-Up Event Model
+// Dashboard sends: {id, title, location, date, end_date, icon, is_recurring, recurrence_rule, is_active}
 
-struct PopUpSale: Identifiable, Codable {
-    let id: String
+struct PopUpEvent: Identifiable, Codable {
+    let id: Int
     let title: String
-    let description: String?
-    let address: String?
-    let latitude: Double
-    let longitude: Double
-    let startsAt: String?
-    let endsAt: String?
+    let location: String
+    let date: String?
+    let endDate: String?
+    let icon: String?
+    let isRecurring: Bool?
+    let recurrenceRule: String?
     let isActive: Bool
 }
