@@ -66,12 +66,17 @@ struct OnboardingView: View {
                                 .foregroundColor(Theme.primary)
                         }
 
-                        Text("Never Miss a Deal")
+                        Text("Stay in the Loop")
                             .font(Theme.heroFont)
                             .foregroundColor(Theme.primary)
                             .multilineTextAlignment(.center)
 
-                        Text("Enable push notifications to get alerted the moment a flash sale drops.")
+                        Text("This is how we reach you.")
+                            .font(Theme.subheadingFont)
+                            .foregroundColor(Theme.primary)
+                            .multilineTextAlignment(.center)
+
+                        Text("Flash sales, pop-up locations, and announcements are all pushed directly to your phone. Turn on notifications so you never miss a deal or a chance to grab fresh beef near you.")
                             .font(Theme.bodyFont)
                             .foregroundColor(Theme.textSecondary)
                             .multilineTextAlignment(.center)
@@ -80,7 +85,7 @@ struct OnboardingView: View {
                         Spacer()
 
                         VStack(spacing: 12) {
-                            Button("Enable Notifications") {
+                            Button("Turn On Notifications") {
                                 Task {
                                     let _ = await notificationService.requestAuthorization()
                                     hasCompletedOnboarding = true
