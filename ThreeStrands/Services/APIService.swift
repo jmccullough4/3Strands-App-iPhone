@@ -99,7 +99,7 @@ class APIService {
             "platform": "ios",
             "device_id": DeviceIdentifier.persistentID,
             "device_name": DeviceIdentifier.deviceName,
-            "environment": apnsEnvironment
+            "apns_environment": apnsEnvironment
         ]
         request.httpBody = try JSONEncoder().encode(body)
         print("Register device request: token=\(token.prefix(20))..., device_id=\(DeviceIdentifier.persistentID), device_name=\(DeviceIdentifier.deviceName)")
