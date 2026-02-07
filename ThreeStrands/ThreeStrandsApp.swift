@@ -51,10 +51,11 @@ struct ThreeStrandsApp: App {
             .preferredColorScheme(.light)
             .task {
                 await registerDeviceIfNeeded()
-                // Ensure push notifications are set up on every launch.
-                // If user tapped "Maybe Later" during onboarding, this will prompt them.
-                // If already authorized, this re-registers to keep the APNs token fresh.
-                await notificationService.ensurePushRegistration()
+                // Only request push after onboarding is done — let the onboarding
+                // flow handle the initial prompt so the user understands WHY first.
+                if hasCompletedOnboarding {
+                    await notificationService.ensurePushRegistration()
+                }
             }
             .onReceive(refreshTimer) { _ in
                 // Poll every 30 seconds for live updates
@@ -63,8 +64,10 @@ struct ThreeStrandsApp: App {
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 // Refresh data every time user opens the app
                 Task { await store.refreshSales() }
-                // Re-register for push to keep APNs token fresh
-                Task { await notificationService.ensurePushRegistration() }
+                // Re-register for push to keep APNs token fresh (only after onboarding)
+                if hasCompletedOnboarding {
+                    Task { await notificationService.ensurePushRegistration() }
+                }
             }
             .onReceive(NotificationCenter.default.publisher(for: .dashboardDidUpdate)) { notification in
                 // Refresh when a push notification signals a dashboard update
