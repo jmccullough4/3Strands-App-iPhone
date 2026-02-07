@@ -54,9 +54,18 @@ struct ThreeStrandsApp: App {
                 // Refresh data every time user opens the app
                 Task { await store.refreshSales() }
             }
-            .onReceive(NotificationCenter.default.publisher(for: .dashboardDidUpdate)) { _ in
+            .onReceive(NotificationCenter.default.publisher(for: .dashboardDidUpdate)) { notification in
                 // Refresh when a push notification signals a dashboard update
                 Task { await store.refreshSales() }
+
+                // Save to inbox if notification has alert content
+                if let userInfo = notification.userInfo,
+                   let aps = userInfo["aps"] as? [String: Any],
+                   let alert = aps["alert"] as? [String: Any],
+                   let title = alert["title"] as? String,
+                   let body = alert["body"] as? String {
+                    store.addInboxItem(title: title, body: body)
+                }
             }
         }
     }

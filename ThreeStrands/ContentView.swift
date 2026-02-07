@@ -25,17 +25,24 @@ struct ContentView: View {
                 .tag(2)
                 .badge(store.activeSales.count)
 
+            NotificationInboxView()
+                .tabItem {
+                    Label("Inbox", systemImage: "bell.fill")
+                }
+                .tag(3)
+                .badge(store.unreadCount)
+
             EventsView()
                 .tabItem {
                     Label("Events", systemImage: "calendar")
                 }
-                .tag(3)
+                .tag(4)
 
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")
                 }
-                .tag(4)
+                .tag(5)
         }
         .tint(Theme.primary)
         .task {
