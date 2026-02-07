@@ -66,6 +66,20 @@ class APIService {
         return try decoder.decode([PopUpSale].self, from: data)
     }
 
+    // MARK: - Announcements (from dashboard — snake_case JSON)
+
+    func fetchAnnouncements() async throws -> [Announcement] {
+        let url = URL(string: "\(dashboardURL)/api/public/announcements")!
+        let (data, response) = try await session.data(from: url)
+        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+            throw APIError.serverError
+        }
+        print("Announcements raw: \(String(data: data, encoding: .utf8) ?? "nil")")
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return try decoder.decode([Announcement].self, from: data)
+    }
+
     // MARK: - Device Registration (to dashboard)
 
     func registerDevice(token: String) async throws {
@@ -233,6 +247,42 @@ struct PopUpSale: Identifiable, Codable {
     let isActive: Bool
 
     var stringId: String { String(id) }
+}
+
+// MARK: - Announcement Model
+// Dashboard sends snake_case: id (int), title, message, created_at, is_active
+
+struct Announcement: Identifiable, Codable {
+    let id: Int
+    let title: String
+    let message: String
+    let createdAt: String?
+    let isActive: Bool
+
+    var formattedDate: String? {
+        guard let createdAt else { return nil }
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        formatter.timeZone = .current
+
+        let fractionalFormatter = DateFormatter()
+        fractionalFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+        fractionalFormatter.timeZone = .current
+
+        let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withInternetDateTime]
+
+        let date = formatter.date(from: createdAt)
+            ?? fractionalFormatter.date(from: createdAt)
+            ?? iso.date(from: createdAt)
+
+        guard let date else { return nil }
+        let display = DateFormatter()
+        display.dateStyle = .medium
+        display.timeStyle = .short
+        return display.string(from: date)
+    }
 }
 
 // MARK: - Persistent Device Identifier

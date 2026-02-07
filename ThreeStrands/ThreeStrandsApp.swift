@@ -111,8 +111,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
-        // Post notification so SwiftUI views refresh
-        NotificationCenter.default.post(name: .dashboardDidUpdate, object: nil)
+        // Post notification so SwiftUI views refresh (flash sales, pop-ups, and announcements)
+        NotificationCenter.default.post(name: .dashboardDidUpdate, object: nil, userInfo: userInfo)
         completionHandler(.newData)
     }
 
@@ -122,8 +122,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
+        let userInfo = notification.request.content.userInfo
         // Refresh data when notification arrives in foreground
-        NotificationCenter.default.post(name: .dashboardDidUpdate, object: nil)
+        NotificationCenter.default.post(name: .dashboardDidUpdate, object: nil, userInfo: userInfo)
         completionHandler([.banner, .badge, .sound])
     }
 
@@ -133,8 +134,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
+        let userInfo = response.notification.request.content.userInfo
         // Refresh data on tap
-        NotificationCenter.default.post(name: .dashboardDidUpdate, object: nil)
+        NotificationCenter.default.post(name: .dashboardDidUpdate, object: nil, userInfo: userInfo)
         completionHandler()
     }
 }

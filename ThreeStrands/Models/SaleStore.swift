@@ -6,6 +6,8 @@ import SwiftUI
 @MainActor
 class SaleStore: ObservableObject {
     @Published var sales: [FlashSale] = []
+    @Published var popUpSales: [PopUpSale] = []
+    @Published var announcements: [Announcement] = []
     @Published var isLoading = false
     @Published var notificationPrefs: NotificationPreferences
 
@@ -38,10 +40,31 @@ class SaleStore: ObservableObject {
     func refreshSales() async {
         isLoading = sales.isEmpty
         do {
-            let fetched = try await APIService.shared.fetchFlashSales()
-            sales = fetched
+            async let flashSalesTask = APIService.shared.fetchFlashSales()
+            async let popUpSalesTask = APIService.shared.fetchPopUpSales()
+            async let announcementsTask = APIService.shared.fetchAnnouncements()
+
+            let (fetchedSales, fetchedPopUps, fetchedAnnouncements) = try await (flashSalesTask, popUpSalesTask, announcementsTask)
+            sales = fetchedSales
+            popUpSales = fetchedPopUps
+            announcements = fetchedAnnouncements
         } catch {
-            print("Flash sales fetch failed: \(error.localizedDescription)")
+            // Fetch individually so one failure doesn't block the others
+            do {
+                sales = try await APIService.shared.fetchFlashSales()
+            } catch {
+                print("Flash sales fetch failed: \(error.localizedDescription)")
+            }
+            do {
+                popUpSales = try await APIService.shared.fetchPopUpSales()
+            } catch {
+                print("Pop-up sales fetch failed: \(error.localizedDescription)")
+            }
+            do {
+                announcements = try await APIService.shared.fetchAnnouncements()
+            } catch {
+                print("Announcements fetch failed: \(error.localizedDescription)")
+            }
         }
         isLoading = false
     }

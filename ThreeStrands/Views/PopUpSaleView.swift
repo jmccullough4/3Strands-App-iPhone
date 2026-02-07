@@ -2,34 +2,15 @@ import SwiftUI
 import MapKit
 
 struct PopUpSaleView: View {
-    @State private var sales: [PopUpSale] = []
-    @State private var isLoading = true
-    @State private var errorMessage: String?
+    @EnvironmentObject var store: SaleStore
 
     var body: some View {
         NavigationStack {
             Group {
-                if isLoading {
+                if store.isLoading && store.popUpSales.isEmpty {
                     ProgressView("Loading pop-up sales...")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if let error = errorMessage {
-                    VStack(spacing: 16) {
-                        Image(systemName: "mappin.slash")
-                            .font(.system(size: 40))
-                            .foregroundColor(Theme.gold)
-                        Text(error)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                        Button("Try Again") {
-                            Task { await loadSales() }
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(Theme.primary)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if sales.isEmpty {
+                } else if store.popUpSales.isEmpty {
                     VStack(spacing: 16) {
                         Image(systemName: "mappin.and.ellipse")
                             .font(.system(size: 40))
@@ -42,7 +23,7 @@ struct PopUpSaleView: View {
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
-                    List(sales) { sale in
+                    List(store.popUpSales) { sale in
                         PopUpSaleRow(sale: sale)
                     }
                     .listStyle(.insetGrouped)
@@ -52,26 +33,9 @@ struct PopUpSaleView: View {
             .navigationTitle("Pop-Up Sales")
             .navigationBarTitleDisplayMode(.inline)
             .refreshable {
-                await loadSales()
+                await store.refreshSales()
             }
         }
-        .task {
-            await loadSales()
-        }
-    }
-
-    private func loadSales() async {
-        isLoading = sales.isEmpty
-        errorMessage = nil
-        do {
-            sales = try await APIService.shared.fetchPopUpSales()
-        } catch {
-            print("Pop-up sales fetch error: \(error)")
-            if sales.isEmpty {
-                errorMessage = error.localizedDescription
-            }
-        }
-        isLoading = false
     }
 }
 
