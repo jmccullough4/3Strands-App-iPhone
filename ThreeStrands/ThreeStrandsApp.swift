@@ -25,6 +25,8 @@ struct ThreeStrandsApp: App {
         UINavigationBar.appearance().tintColor = UIColor(Theme.primary)
     }
 
+    private let refreshTimer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
+
     var body: some Scene {
         WindowGroup {
             Group {
@@ -49,6 +51,10 @@ struct ThreeStrandsApp: App {
             .preferredColorScheme(.light)
             .task {
                 await registerDeviceIfNeeded()
+            }
+            .onReceive(refreshTimer) { _ in
+                // Poll every 30 seconds for live updates
+                Task { await store.refreshSales() }
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 // Refresh data every time user opens the app
