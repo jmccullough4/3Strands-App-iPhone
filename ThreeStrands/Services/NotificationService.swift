@@ -52,6 +52,34 @@ class NotificationService: NSObject, ObservableObject {
         }
     }
 
+    // MARK: - Ensure Push Registration on Every Launch
+
+    /// Call this on every app launch to guarantee push notifications are set up.
+    /// If the user hasn't been asked yet, this prompts them.
+    /// If already authorized, it re-registers to keep the APNs token fresh.
+    /// If denied, it does nothing (user must change in iOS Settings).
+    func ensurePushRegistration() async {
+        let settings = await UNUserNotificationCenter.current().notificationSettings()
+        await MainActor.run {
+            self.authorizationStatus = settings.authorizationStatus
+            self.isAuthorized = settings.authorizationStatus == .authorized
+        }
+
+        switch settings.authorizationStatus {
+        case .notDetermined:
+            // User hasn't been asked yet — request permission now
+            let _ = await requestAuthorization()
+        case .authorized, .provisional, .ephemeral:
+            // Already authorized — re-register to keep APNs token fresh
+            await registerForRemoteNotifications()
+        case .denied:
+            // User explicitly denied — nothing we can do from code
+            print("Push notifications denied by user. They must enable in iOS Settings.")
+        @unknown default:
+            break
+        }
+    }
+
     // MARK: - Register for Remote Notifications
 
     @MainActor
