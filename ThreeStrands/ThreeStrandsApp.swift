@@ -50,7 +50,10 @@ struct ThreeStrandsApp: App {
             }
             .preferredColorScheme(.light)
             .task {
-                await registerDeviceIfNeeded()
+                // Re-register the persisted APNs token with the dashboard (if we have one).
+                // This ensures the dashboard always has a valid APNs token on file,
+                // rather than overwriting it with a non-APNs device identifier.
+                await notificationService.reRegisterStoredToken()
                 // Only request push after onboarding is done — let the onboarding
                 // flow handle the initial prompt so the user understands WHY first.
                 if hasCompletedOnboarding {
@@ -82,18 +85,6 @@ struct ThreeStrandsApp: App {
                     store.addInboxItem(title: title, body: body)
                 }
             }
-        }
-    }
-
-    private func registerDeviceIfNeeded() async {
-        // Use the persistent Keychain device ID as the token for initial registration.
-        // The real APNs token is sent separately via NotificationService when push is authorized.
-        let deviceId = DeviceIdentifier.persistentID
-        do {
-            try await APIService.shared.registerDevice(token: deviceId)
-            print("Device registered with persistent ID: \(deviceId)")
-        } catch {
-            print("Device registration failed: \(error.localizedDescription)")
         }
     }
 }
