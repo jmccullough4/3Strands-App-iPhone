@@ -146,7 +146,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         let userInfo = notification.request.content.userInfo
         // Refresh data when notification arrives in foreground
         NotificationCenter.default.post(name: .dashboardDidUpdate, object: nil, userInfo: userInfo)
-        completionHandler([.banner, .badge, .sound])
+        completionHandler([.banner, .list, .badge, .sound])
     }
 
     // Handle notification tap
