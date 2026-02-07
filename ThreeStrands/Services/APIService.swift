@@ -87,11 +87,19 @@ class APIService {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        #if DEBUG
+        let apnsEnvironment = "sandbox"
+        #else
+        let apnsEnvironment = "production"
+        #endif
+
         let body: [String: String] = [
             "token": token,
             "platform": "ios",
             "device_id": DeviceIdentifier.persistentID,
-            "device_name": DeviceIdentifier.deviceName
+            "device_name": DeviceIdentifier.deviceName,
+            "environment": apnsEnvironment
         ]
         request.httpBody = try JSONEncoder().encode(body)
         print("Register device request: token=\(token.prefix(20))..., device_id=\(DeviceIdentifier.persistentID), device_name=\(DeviceIdentifier.deviceName)")
