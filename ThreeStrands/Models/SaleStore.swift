@@ -1,6 +1,36 @@
 import Foundation
 import SwiftUI
 
+// MARK: - Inbox Item Model
+
+struct InboxItem: Identifiable, Codable {
+    let id: String
+    let title: String
+    let body: String
+    let receivedAt: Date
+    var isRead: Bool
+
+    init(title: String, body: String) {
+        self.id = UUID().uuidString
+        self.title = title
+        self.body = body
+        self.receivedAt = Date()
+        self.isRead = false
+    }
+
+    var timeAgo: String {
+        let interval = Date().timeIntervalSince(receivedAt)
+        let minutes = Int(interval) / 60
+        let hours = minutes / 60
+        let days = hours / 24
+
+        if days > 0 { return "\(days)d ago" }
+        if hours > 0 { return "\(hours)h ago" }
+        if minutes > 0 { return "\(minutes)m ago" }
+        return "Just now"
+    }
+}
+
 // MARK: - Flash Sale Store (Observable state)
 
 @MainActor
@@ -8,10 +38,12 @@ class SaleStore: ObservableObject {
     @Published var sales: [FlashSale] = []
     @Published var popUpSales: [PopUpSale] = []
     @Published var announcements: [Announcement] = []
+    @Published var inboxItems: [InboxItem] = []
     @Published var isLoading = false
     @Published var notificationPrefs: NotificationPreferences
 
     private let prefsKey = NotificationPreferences.storageKey
+    private let inboxKey = "notification_inbox"
 
     init() {
         if let data = UserDefaults.standard.data(forKey: NotificationPreferences.storageKey),
@@ -19,6 +51,12 @@ class SaleStore: ObservableObject {
             self.notificationPrefs = prefs
         } else {
             self.notificationPrefs = NotificationPreferences()
+        }
+
+        // Load saved inbox
+        if let data = UserDefaults.standard.data(forKey: inboxKey),
+           let items = try? JSONDecoder().decode([InboxItem].self, from: data) {
+            self.inboxItems = items
         }
     }
 
@@ -31,11 +69,50 @@ class SaleStore: ObservableObject {
         sales.filter { $0.isExpired || !$0.isActive }
     }
 
+    var unreadCount: Int {
+        inboxItems.filter { !$0.isRead }.count
+    }
+
+    // MARK: - Preferences
+
     func savePreferences() {
         if let data = try? JSONEncoder().encode(notificationPrefs) {
             UserDefaults.standard.set(data, forKey: prefsKey)
         }
     }
+
+    // MARK: - Inbox
+
+    func addInboxItem(title: String, body: String) {
+        let item = InboxItem(title: title, body: body)
+        inboxItems.insert(item, at: 0)
+        saveInbox()
+    }
+
+    func markAsRead(_ id: String) {
+        if let index = inboxItems.firstIndex(where: { $0.id == id }) {
+            inboxItems[index].isRead = true
+            saveInbox()
+        }
+    }
+
+    func removeInboxItem(_ id: String) {
+        inboxItems.removeAll { $0.id == id }
+        saveInbox()
+    }
+
+    func clearInbox() {
+        inboxItems.removeAll()
+        saveInbox()
+    }
+
+    private func saveInbox() {
+        if let data = try? JSONEncoder().encode(inboxItems) {
+            UserDefaults.standard.set(data, forKey: inboxKey)
+        }
+    }
+
+    // MARK: - Data Refresh
 
     func refreshSales() async {
         isLoading = sales.isEmpty
