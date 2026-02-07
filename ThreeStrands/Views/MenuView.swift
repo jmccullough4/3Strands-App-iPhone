@@ -96,6 +96,8 @@ struct MenuView: View {
     @State private var isLoading = true
     @State private var errorMessage: String?
 
+    private let pollTimer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
+
     var body: some View {
         NavigationStack {
             Group {
@@ -173,6 +175,9 @@ struct MenuView: View {
         }
         .task {
             await loadCatalog()
+        }
+        .onReceive(pollTimer) { _ in
+            Task { await loadCatalog() }
         }
     }
 

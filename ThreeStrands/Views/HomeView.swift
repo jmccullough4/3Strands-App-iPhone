@@ -11,6 +11,9 @@ struct HomeView: View {
                     // Hero Banner
                     heroBanner
 
+                    // Announcements from dashboard
+                    announcementsSection
+
                     // Active Flash Sales
                     if !store.activeSales.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
@@ -107,13 +110,62 @@ struct HomeView: View {
         .padding(.top, 8)
     }
 
-    // MARK: - Pop-Up Sales
+    // MARK: - Announcements
 
-    @State private var popUpSales: [PopUpSale] = []
+    private var announcementsSection: some View {
+        Group {
+            let active = store.announcements.filter { $0.isActive }
+            if !active.isEmpty {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Image(systemName: "megaphone.fill")
+                            .foregroundColor(Theme.gold)
+                        Text("Announcements")
+                            .font(Theme.headingFont)
+                            .foregroundColor(Theme.primary)
+                        Spacer()
+                    }
+                    .padding(.horizontal, Theme.screenPadding)
+
+                    ForEach(active) { announcement in
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(announcement.title)
+                                .font(.system(size: 15, weight: .bold))
+                                .foregroundColor(Theme.primary)
+
+                            Text(announcement.message)
+                                .font(Theme.bodyFont)
+                                .foregroundColor(Theme.textPrimary)
+                                .fixedSize(horizontal: false, vertical: true)
+
+                            if let date = announcement.formattedDate {
+                                Text(date)
+                                    .font(Theme.captionFont)
+                                    .foregroundColor(Theme.textSecondary)
+                            }
+                        }
+                        .padding(16)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: Theme.cornerRadius)
+                                .fill(Theme.gold.opacity(0.1))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: Theme.cornerRadius)
+                                        .stroke(Theme.gold.opacity(0.3), lineWidth: 1)
+                                )
+                        )
+                        .padding(.horizontal, Theme.screenPadding)
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Pop-Up Sales
 
     private var popUpSalesSection: some View {
         Group {
-            if !popUpSales.isEmpty {
+            if !store.popUpSales.isEmpty {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Image(systemName: "mappin.and.ellipse")
@@ -125,7 +177,7 @@ struct HomeView: View {
                     }
                     .padding(.horizontal, Theme.screenPadding)
 
-                    ForEach(popUpSales) { sale in
+                    ForEach(store.popUpSales) { sale in
                         NavigationLink(destination: PopUpSaleView()) {
                             HStack(spacing: 14) {
                                 Image(systemName: "mappin.circle.fill")
@@ -167,13 +219,6 @@ struct HomeView: View {
                         .padding(.horizontal, Theme.screenPadding)
                     }
                 }
-            }
-        }
-        .task {
-            do {
-                popUpSales = try await APIService.shared.fetchPopUpSales()
-            } catch {
-                print("Pop-up sales fetch failed: \(error)")
             }
         }
     }
