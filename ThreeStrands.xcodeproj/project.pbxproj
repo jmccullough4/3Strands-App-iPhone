@@ -25,6 +25,7 @@
 		A10000016 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000015; };
 		A10000017 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000016; };
 		A10000018 /* PopUpSaleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000017; };
+		A10000019 /* NotificationInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000018; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,7 @@
 		A20000015 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		A20000016 /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		A20000017 /* PopUpSaleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpSaleView.swift; sourceTree = "<group>"; };
+		A20000018 /* NotificationInboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationInboxView.swift; sourceTree = "<group>"; };
 		A30000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A40000001 /* ThreeStrands.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThreeStrands.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -104,6 +106,7 @@
 				A20000014 /* EventsView.swift */,
 				A20000016 /* MenuView.swift */,
 				A20000017 /* PopUpSaleView.swift */,
+				A20000018 /* NotificationInboxView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -211,6 +214,7 @@
 				A10000016 /* APIService.swift in Sources */,
 				A10000017 /* MenuView.swift in Sources */,
 				A10000018 /* PopUpSaleView.swift in Sources */,
+				A10000019 /* NotificationInboxView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
