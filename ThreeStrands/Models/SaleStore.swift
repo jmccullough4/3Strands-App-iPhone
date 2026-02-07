@@ -42,8 +42,13 @@ class SaleStore: ObservableObject {
     @Published var isLoading = false
     @Published var notificationPrefs: NotificationPreferences
 
+    /// IDs of inbox items the user dismissed from the Home screen (but not deleted from Inbox)
+    @Published var dismissedFromHome: Set<String> = []
+
     private let prefsKey = NotificationPreferences.storageKey
     private let inboxKey = "notification_inbox"
+    private let dismissedKey = "dismissed_from_home"
+    private let seenAnnouncementIDsKey = "seen_announcement_ids"
 
     init() {
         if let data = UserDefaults.standard.data(forKey: NotificationPreferences.storageKey),
@@ -58,6 +63,16 @@ class SaleStore: ObservableObject {
            let items = try? JSONDecoder().decode([InboxItem].self, from: data) {
             self.inboxItems = items
         }
+
+        // Load dismissed set
+        if let ids = UserDefaults.standard.array(forKey: dismissedKey) as? [String] {
+            self.dismissedFromHome = Set(ids)
+        }
+    }
+
+    /// Inbox items that haven't been dismissed from the Home screen
+    var homeNotifications: [InboxItem] {
+        inboxItems.filter { !dismissedFromHome.contains($0.id) }
     }
 
     var activeSales: [FlashSale] {
@@ -96,19 +111,53 @@ class SaleStore: ObservableObject {
         }
     }
 
+    func dismissFromHome(_ id: String) {
+        dismissedFromHome.insert(id)
+        saveDismissed()
+    }
+
     func removeInboxItem(_ id: String) {
         inboxItems.removeAll { $0.id == id }
+        dismissedFromHome.remove(id)
         saveInbox()
+        saveDismissed()
     }
 
     func clearInbox() {
         inboxItems.removeAll()
+        dismissedFromHome.removeAll()
         saveInbox()
+        saveDismissed()
     }
 
     private func saveInbox() {
         if let data = try? JSONEncoder().encode(inboxItems) {
             UserDefaults.standard.set(data, forKey: inboxKey)
+        }
+    }
+
+    private func saveDismissed() {
+        UserDefaults.standard.set(Array(dismissedFromHome), forKey: dismissedKey)
+    }
+
+    /// Sync fetched announcements into inbox — creates inbox items for new announcements
+    func syncAnnouncementsToInbox() {
+        var seenIDs = Set(UserDefaults.standard.stringArray(forKey: seenAnnouncementIDsKey) ?? [])
+        var added = false
+
+        for announcement in announcements where announcement.isActive {
+            let announcementKey = "announcement-\(announcement.id)"
+            if !seenIDs.contains(announcementKey) {
+                let item = InboxItem(title: announcement.title, body: announcement.message)
+                inboxItems.insert(item, at: 0)
+                seenIDs.insert(announcementKey)
+                added = true
+            }
+        }
+
+        if added {
+            saveInbox()
+            UserDefaults.standard.set(Array(seenIDs), forKey: seenAnnouncementIDsKey)
         }
     }
 
@@ -144,5 +193,8 @@ class SaleStore: ObservableObject {
             }
         }
         isLoading = false
+
+        // Auto-create inbox items for any new announcements
+        syncAnnouncementsToInbox()
     }
 }

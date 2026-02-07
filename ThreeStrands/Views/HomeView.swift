@@ -11,8 +11,8 @@ struct HomeView: View {
                     // Hero Banner
                     heroBanner
 
-                    // Announcements from dashboard
-                    announcementsSection
+                    // Notification banners (iOS-style, dismissable)
+                    notificationBanners
 
                     // Active Flash Sales
                     if !store.activeSales.isEmpty {
@@ -110,53 +110,23 @@ struct HomeView: View {
         .padding(.top, 8)
     }
 
-    // MARK: - Announcements
+    // MARK: - Notification Banners (iOS-style)
 
-    private var announcementsSection: some View {
+    private var notificationBanners: some View {
         Group {
-            let active = store.announcements.filter { $0.isActive }
-            if !active.isEmpty {
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        Image(systemName: "megaphone.fill")
-                            .foregroundColor(Theme.gold)
-                        Text("Announcements")
-                            .font(Theme.headingFont)
-                            .foregroundColor(Theme.primary)
-                        Spacer()
-                    }
-                    .padding(.horizontal, Theme.screenPadding)
-
-                    ForEach(active) { announcement in
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(announcement.title)
-                                .font(.system(size: 15, weight: .bold))
-                                .foregroundColor(Theme.primary)
-
-                            Text(announcement.message)
-                                .font(Theme.bodyFont)
-                                .foregroundColor(Theme.textPrimary)
-                                .fixedSize(horizontal: false, vertical: true)
-
-                            if let date = announcement.formattedDate {
-                                Text(date)
-                                    .font(Theme.captionFont)
-                                    .foregroundColor(Theme.textSecondary)
+            let visible = store.homeNotifications
+            if !visible.isEmpty {
+                VStack(spacing: 10) {
+                    ForEach(visible) { item in
+                        NotificationBanner(item: item) {
+                            withAnimation(.easeOut(duration: 0.25)) {
+                                store.dismissFromHome(item.id)
                             }
                         }
-                        .padding(16)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(
-                            RoundedRectangle(cornerRadius: Theme.cornerRadius)
-                                .fill(Theme.gold.opacity(0.1))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: Theme.cornerRadius)
-                                        .stroke(Theme.gold.opacity(0.3), lineWidth: 1)
-                                )
-                        )
-                        .padding(.horizontal, Theme.screenPadding)
+                        .transition(.move(edge: .top).combined(with: .opacity))
                     }
                 }
+                .padding(.horizontal, Theme.screenPadding)
             }
         }
     }
@@ -304,5 +274,87 @@ struct HomeView: View {
             )
         }
         .buttonStyle(.plain)
+    }
+}
+
+// MARK: - iOS-Style Notification Banner
+
+struct NotificationBanner: View {
+    let item: InboxItem
+    let onDismiss: () -> Void
+
+    @State private var offset: CGFloat = 0
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            // App icon
+            Image("Appicon")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 38, height: 38)
+                .clipShape(RoundedRectangle(cornerRadius: 9))
+
+            VStack(alignment: .leading, spacing: 3) {
+                HStack {
+                    Text("3 Strands Cattle Co.")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text(item.timeAgo)
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                }
+
+                Text(item.title)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(.primary)
+
+                Text(item.body)
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
+                    .lineLimit(2)
+            }
+        }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(.ultraThinMaterial)
+                .shadow(color: .black.opacity(0.12), radius: 12, y: 4)
+        )
+        .overlay(alignment: .topTrailing) {
+            Button {
+                onDismiss()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(.secondary)
+                    .frame(width: 22, height: 22)
+                    .background(Circle().fill(Color(.systemGray5)))
+            }
+            .padding(8)
+        }
+        .offset(x: offset)
+        .gesture(
+            DragGesture()
+                .onChanged { value in
+                    if value.translation.width < 0 {
+                        offset = value.translation.width
+                    }
+                }
+                .onEnded { value in
+                    if value.translation.width < -100 {
+                        withAnimation(.easeOut(duration: 0.2)) {
+                            offset = -500
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            onDismiss()
+                        }
+                    } else {
+                        withAnimation(.spring(response: 0.3)) {
+                            offset = 0
+                        }
+                    }
+                }
+        )
     }
 }
