@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import UserNotifications
 
 // MARK: - Inbox Item Model
 
@@ -141,6 +142,7 @@ class SaleStore: ObservableObject {
     }
 
     /// Sync fetched announcements into inbox — creates inbox items for new announcements
+    /// Also fires a local iOS notification so it appears on lock screen / notification center
     func syncAnnouncementsToInbox() {
         var seenIDs = Set(UserDefaults.standard.stringArray(forKey: seenAnnouncementIDsKey) ?? [])
         var added = false
@@ -152,12 +154,34 @@ class SaleStore: ObservableObject {
                 inboxItems.insert(item, at: 0)
                 seenIDs.insert(announcementKey)
                 added = true
+
+                // Fire a local iOS notification so it shows on lock screen & notification center
+                scheduleLocalNotification(title: announcement.title, body: announcement.message, id: announcementKey)
             }
         }
 
         if added {
             saveInbox()
             UserDefaults.standard.set(Array(seenIDs), forKey: seenAnnouncementIDsKey)
+        }
+    }
+
+    /// Schedule a local notification that appears on lock screen, notification center, and as a banner
+    private func scheduleLocalNotification(title: String, body: String, id: String) {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.sound = .default
+        content.badge = NSNumber(value: unreadCount + 1)
+
+        // Deliver immediately (1-second trigger)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error {
+                print("Local notification error: \(error.localizedDescription)")
+            }
         }
     }
 
