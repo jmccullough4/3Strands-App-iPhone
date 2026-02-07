@@ -148,8 +148,10 @@ class SaleStore: ObservableObject {
         var added = false
 
         for announcement in announcements where announcement.isActive {
-            let announcementKey = "announcement-\(announcement.id)"
+            // Include created_at in the key so updated/recreated announcements are treated as new
+            let announcementKey = "announcement-\(announcement.id)-\(announcement.createdAt ?? "")"
             if !seenIDs.contains(announcementKey) {
+                print("NEW announcement detected: id=\(announcement.id), title=\(announcement.title), key=\(announcementKey)")
                 let item = InboxItem(title: announcement.title, body: announcement.message)
                 inboxItems.insert(item, at: 0)
                 seenIDs.insert(announcementKey)
