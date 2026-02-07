@@ -88,11 +88,9 @@ class APIService {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        #if DEBUG
-        let apnsEnvironment = "sandbox"
-        #else
+        // APNs key is configured for Production only in Apple Developer Portal
+        // Always use production environment regardless of build type
         let apnsEnvironment = "production"
-        #endif
 
         let body: [String: String] = [
             "token": token,
