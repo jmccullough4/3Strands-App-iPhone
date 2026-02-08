@@ -51,6 +51,8 @@ struct ThreeStrandsApp: App {
             }
             .preferredColorScheme(.light)
             .task {
+                // Clear the app icon badge on launch
+                try? await UNUserNotificationCenter.current().setBadgeCount(0)
                 // Re-register the persisted APNs token with the dashboard (if we have one).
                 // This ensures the dashboard always has a valid APNs token on file,
                 // rather than overwriting it with a non-APNs device identifier.
@@ -66,6 +68,8 @@ struct ThreeStrandsApp: App {
                 Task { await store.refreshSales() }
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                // Clear the app icon badge when user opens the app
+                Task { try? await UNUserNotificationCenter.current().setBadgeCount(0) }
                 // Refresh data every time user opens the app
                 Task { await store.refreshSales() }
                 // Re-register for push to keep APNs token fresh (only after onboarding)
@@ -280,6 +284,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
+        // Clear the app icon badge when user taps a notification
+        Task { try? await UNUserNotificationCenter.current().setBadgeCount(0) }
         let userInfo = response.notification.request.content.userInfo
         // Refresh data on tap
         NotificationCenter.default.post(name: .dashboardDidUpdate, object: nil, userInfo: userInfo)

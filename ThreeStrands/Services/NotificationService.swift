@@ -148,7 +148,6 @@ class NotificationService: NSObject, ObservableObject {
         content.subtitle = sale
         content.body = "Save \(discount) — limited time only! Tap to grab this deal before it's gone."
         content.sound = .default
-        content.badge = 1
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
         let request = UNNotificationRequest(
