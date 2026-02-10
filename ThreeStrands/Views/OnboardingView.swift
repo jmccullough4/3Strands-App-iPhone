@@ -46,7 +46,7 @@ struct OnboardingView: View {
                     // Page 2: Flash Sales
                     onboardingPage(
                         icon: "bolt.fill",
-                        iconColor: Theme.gold,
+                        iconColor: Theme.bronzeGold,
                         title: "Flash Sales",
                         subtitle: "Deals that don't last long.",
                         detail: "Get exclusive access to limited-time offers on premium cuts, bundles, and seasonal specials."
