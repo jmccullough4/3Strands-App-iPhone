@@ -12,8 +12,6 @@ class APIService {
         UserDefaults.standard.string(forKey: "api_base_url") ?? "https://dashboard.3strands.co"
     }
 
-    let websiteURL = "https://3strands.co"
-
     private let session: URLSession
 
     init() {
@@ -38,18 +36,11 @@ class APIService {
         return apiSales.map { $0.toFlashSale() }
     }
 
-    // MARK: - Catalog / Menu (from main website — camelCase JSON)
+    // MARK: - Catalog / Menu (direct from Square API)
 
     func fetchCatalog() async throws -> [CatalogItem] {
-        let url = URL(string: "\(websiteURL)/api/catalog")!
-        let (data, response) = try await session.data(from: url)
-        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
-            throw APIError.serverError
-        }
-        print("Catalog raw (first 500): \(String(data: data.prefix(500), encoding: .utf8) ?? "nil")")
-        let decoder = JSONDecoder()
-        let wrapper = try decoder.decode(CatalogResponse.self, from: data)
-        return wrapper.items
+        // Use SquareService for direct Square API access
+        return try await SquareService.shared.fetchCatalog()
     }
 
     // MARK: - Pop-Up Sales (from dashboard — snake_case JSON)
@@ -185,13 +176,7 @@ struct APIFlashSale: Codable {
     }
 }
 
-// MARK: - Catalog API Models
-// Website 3strands.co/api/catalog sends camelCase:
-// {items: [{id, name, description, category, variations: [{id, name, priceMoney: {amount, currency}, pricingType}]}]}
-
-struct CatalogResponse: Codable {
-    let items: [CatalogItem]
-}
+// MARK: - Catalog API Models (used by SquareService)
 
 struct CatalogItem: Identifiable, Codable {
     let id: String
