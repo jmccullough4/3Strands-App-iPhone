@@ -189,19 +189,26 @@ struct CatalogItem: Identifiable {
         variations.compactMap { $0.priceMoney?.amount }.min()
     }
 
-    /// Total quantity across all variations
-    var totalQuantity: Double {
-        variations.reduce(0) { $0 + ($1.quantity ?? 0) }
+    /// Whether any variation has inventory tracking enabled
+    var hasInventoryTracking: Bool {
+        variations.contains { $0.quantity != nil }
+    }
+
+    /// Total quantity across all tracked variations
+    var totalQuantity: Double? {
+        guard hasInventoryTracking else { return nil }
+        return variations.compactMap { $0.quantity }.reduce(0, +)
     }
 
     var isSoldOut: Bool {
-        // Sold out if all variations have zero or no quantity
-        variations.allSatisfy { ($0.quantity ?? 0) <= 0 }
+        // Only sold out if inventory is tracked AND all tracked variations have qty <= 0
+        guard hasInventoryTracking else { return false }
+        return variations.filter { $0.quantity != nil }.allSatisfy { $0.quantity! <= 0 }
     }
 
     var isLowStock: Bool {
-        // Low stock if total quantity is between 1 and 5
-        let qty = totalQuantity
+        // Low stock if tracked and total quantity is between 1 and 5
+        guard let qty = totalQuantity else { return false }
         return qty > 0 && qty <= 5
     }
 
@@ -222,8 +229,10 @@ struct CatalogVariation: Identifiable {
     let pricingType: String?
     var quantity: Double?
 
+    /// Only sold out if inventory is tracked (quantity != nil) AND qty <= 0
     var isSoldOut: Bool {
-        (quantity ?? 0) <= 0
+        guard let qty = quantity else { return false }
+        return qty <= 0
     }
 
     var formattedPrice: String {
