@@ -178,21 +178,31 @@ struct APIFlashSale: Codable {
 
 // MARK: - Catalog API Models (used by SquareService)
 
-struct CatalogItem: Identifiable, Codable {
+struct CatalogItem: Identifiable {
     let id: String
     let name: String
     let description: String?
     let category: String?
-    let variations: [CatalogVariation]
+    var variations: [CatalogVariation]
 
     var lowestPrice: Int? {
         variations.compactMap { $0.priceMoney?.amount }.min()
     }
 
+    /// Total quantity across all variations
+    var totalQuantity: Double {
+        variations.reduce(0) { $0 + ($1.quantity ?? 0) }
+    }
+
     var isSoldOut: Bool {
-        // All variations have no price or zero price
-        let prices = variations.compactMap { $0.priceMoney?.amount }
-        return prices.isEmpty || prices.allSatisfy { $0 == 0 }
+        // Sold out if all variations have zero or no quantity
+        variations.allSatisfy { ($0.quantity ?? 0) <= 0 }
+    }
+
+    var isLowStock: Bool {
+        // Low stock if total quantity is between 1 and 5
+        let qty = totalQuantity
+        return qty > 0 && qty <= 5
     }
 
     var formattedPrice: String {
@@ -205,11 +215,16 @@ struct CatalogItem: Identifiable, Codable {
     }
 }
 
-struct CatalogVariation: Identifiable, Codable {
+struct CatalogVariation: Identifiable {
     let id: String
     let name: String
     let priceMoney: PriceMoney?
     let pricingType: String?
+    var quantity: Double?
+
+    var isSoldOut: Bool {
+        (quantity ?? 0) <= 0
+    }
 
     var formattedPrice: String {
         guard let cents = priceMoney?.amount else { return "Market Price" }

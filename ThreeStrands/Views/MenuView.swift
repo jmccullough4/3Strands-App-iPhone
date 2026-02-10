@@ -228,7 +228,7 @@ struct MenuItemRow: View {
             HStack {
                 Text(item.name)
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(Theme.primary)
+                    .foregroundColor(item.isSoldOut ? .secondary : Theme.primary)
 
                 Spacer()
 
@@ -238,9 +238,20 @@ struct MenuItemRow: View {
                         .foregroundColor(.red.opacity(0.8))
                         .italic()
                 } else {
-                    Text(item.formattedPrice)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(Theme.forestGreen)
+                    HStack(spacing: 8) {
+                        if item.isLowStock {
+                            Text("Low Stock")
+                                .font(.caption2.weight(.semibold))
+                                .foregroundColor(.orange)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.orange.opacity(0.15))
+                                .cornerRadius(4)
+                        }
+                        Text(item.formattedPrice)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundColor(Theme.forestGreen)
+                    }
                 }
             }
 
@@ -250,9 +261,17 @@ struct MenuItemRow: View {
                         HStack {
                             Text(v.name)
                                 .font(.subheadline)
+                                .foregroundColor(v.isSoldOut ? .secondary : .primary)
                             Spacer()
-                            Text(v.formattedPrice)
-                                .font(.subheadline.weight(.medium))
+                            if v.isSoldOut {
+                                Text("Sold Out")
+                                    .font(.caption2.weight(.semibold))
+                                    .foregroundColor(.red.opacity(0.7))
+                                    .italic()
+                            } else {
+                                Text(v.formattedPrice)
+                                    .font(.subheadline.weight(.medium))
+                            }
                         }
                         .padding(.vertical, 2)
                     }

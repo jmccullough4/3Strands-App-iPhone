@@ -82,8 +82,10 @@ class SquareService {
         }
 
         var allItems: [CatalogItem] = []
+        var allVariationIds: [String] = []
         var cursor: String? = nil
 
+        // Step 1: Fetch all catalog items
         repeat {
             var urlComponents = URLComponents(string: "\(baseURL)/catalog/list")!
             var queryItems = [URLQueryItem(name: "types", value: "ITEM")]
@@ -116,11 +118,13 @@ class SquareService {
 
                 let variations = (itemData.variations ?? []).compactMap { variation -> CatalogVariation? in
                     guard let varData = variation.itemVariationData else { return nil }
+                    allVariationIds.append(variation.id)
                     return CatalogVariation(
                         id: variation.id,
                         name: varData.name ?? "",
                         priceMoney: varData.priceMoney.map { PriceMoney(amount: $0.amount, currency: $0.currency) },
-                        pricingType: varData.pricingType
+                        pricingType: varData.pricingType,
+                        quantity: nil
                     )
                 }
 
@@ -128,7 +132,7 @@ class SquareService {
                     id: obj.id,
                     name: itemData.name ?? "",
                     description: itemData.description,
-                    category: itemData.categoryId,  // Square uses category_id, not name
+                    category: itemData.categoryId,
                     variations: variations
                 )
                 allItems.append(item)
@@ -137,8 +141,70 @@ class SquareService {
             cursor = catalogResponse.cursor
         } while cursor != nil
 
-        print("Square catalog fetched: \(allItems.count) items")
+        print("Square catalog fetched: \(allItems.count) items, \(allVariationIds.count) variations")
+
+        // Step 2: Fetch inventory counts for all variations
+        let inventoryCounts = try await fetchInventoryCounts(catalogObjectIds: allVariationIds)
+
+        // Step 3: Merge inventory into catalog items
+        for i in 0..<allItems.count {
+            for j in 0..<allItems[i].variations.count {
+                let varId = allItems[i].variations[j].id
+                if let qty = inventoryCounts[varId] {
+                    allItems[i].variations[j].quantity = qty
+                }
+            }
+        }
+
         return allItems
+    }
+
+    // MARK: - Inventory API
+
+    private func fetchInventoryCounts(catalogObjectIds: [String]) async throws -> [String: Double] {
+        guard let token = accessToken else { return [:] }
+        guard !catalogObjectIds.isEmpty else { return [:] }
+
+        var inventoryCounts: [String: Double] = [:]
+
+        // Square limits batch requests to 100 IDs at a time
+        let batchSize = 100
+        for startIndex in stride(from: 0, to: catalogObjectIds.count, by: batchSize) {
+            let endIndex = min(startIndex + batchSize, catalogObjectIds.count)
+            let batchIds = Array(catalogObjectIds[startIndex..<endIndex])
+
+            let url = URL(string: "\(baseURL)/inventory/counts/batch-retrieve")!
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue(apiVersion, forHTTPHeaderField: "Square-Version")
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+            let body: [String: Any] = [
+                "catalog_object_ids": batchIds
+            ]
+            request.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+            let (data, response) = try await session.data(for: request)
+
+            guard let http = response as? HTTPURLResponse else { continue }
+
+            if http.statusCode != 200 {
+                print("Square Inventory API error: \(http.statusCode) - \(String(data: data, encoding: .utf8) ?? "nil")")
+                continue
+            }
+
+            let inventoryResponse = try JSONDecoder().decode(SquareInventoryResponse.self, from: data)
+
+            // Sum quantities by catalog object ID (may have multiple location counts)
+            for count in inventoryResponse.counts ?? [] {
+                let qty = Double(count.quantity ?? "0") ?? 0
+                inventoryCounts[count.catalogObjectId, default: 0] += qty
+            }
+        }
+
+        print("Square inventory fetched: \(inventoryCounts.count) items with stock")
+        return inventoryCounts
     }
 }
 
@@ -197,4 +263,20 @@ private struct SquareVariationData: Codable {
 private struct SquarePriceMoney: Codable {
     let amount: Int
     let currency: String
+}
+
+// MARK: - Square Inventory Response Models
+
+private struct SquareInventoryResponse: Codable {
+    let counts: [SquareInventoryCount]?
+}
+
+private struct SquareInventoryCount: Codable {
+    let catalogObjectId: String
+    let quantity: String?
+
+    enum CodingKeys: String, CodingKey {
+        case catalogObjectId = "catalog_object_id"
+        case quantity
+    }
 }
