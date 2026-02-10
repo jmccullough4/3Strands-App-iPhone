@@ -13,7 +13,7 @@ struct SettingsView: View {
                     HStack {
                         Image(systemName: notificationService.isAuthorized ? "bell.badge.fill" : "bell.slash.fill")
                             .font(.system(size: 22))
-                            .foregroundColor(notificationService.isAuthorized ? Theme.forestGreen : Theme.textSecondary)
+                            .foregroundColor(notificationService.isAuthorized ? Theme.bronze : Theme.textSecondary)
                             .frame(width: 32)
 
                         VStack(alignment: .leading, spacing: 2) {
@@ -21,7 +21,7 @@ struct SettingsView: View {
                                 .font(.system(size: 15, weight: .medium))
                             Text(notificationService.isAuthorized ? "Enabled" : "Disabled")
                                 .font(Theme.captionFont)
-                                .foregroundColor(notificationService.isAuthorized ? Theme.forestGreen : Theme.textSecondary)
+                                .foregroundColor(notificationService.isAuthorized ? Theme.bronze : Theme.textSecondary)
                         }
 
                         Spacer()
@@ -46,10 +46,10 @@ struct SettingsView: View {
                 // Notification Preferences
                 Section {
                     Toggle(isOn: $store.notificationPrefs.flashSalesEnabled) {
-                        settingsRow(icon: "bolt.fill", title: "Flash Sales", color: Theme.gold)
+                        settingsRow(icon: "bolt.fill", title: "Flash Sales", color: Theme.bronzeGold)
                     }
                     Toggle(isOn: $store.notificationPrefs.priceDropsEnabled) {
-                        settingsRow(icon: "arrow.down.circle.fill", title: "Price Drops", color: Theme.forestGreen)
+                        settingsRow(icon: "arrow.down.circle.fill", title: "Price Drops", color: Theme.bronze)
                     }
                     Toggle(isOn: $store.notificationPrefs.newArrivalsEnabled) {
                         settingsRow(icon: "sparkles", title: "New Arrivals", color: Theme.primary)
@@ -116,7 +116,7 @@ struct SettingsView: View {
                             .foregroundColor(Theme.textSecondary)
                     }
                     HStack {
-                        settingsRow(icon: "globe", title: "Website", color: Theme.forestGreen)
+                        settingsRow(icon: "globe", title: "Website", color: Theme.bronze)
                         Spacer()
                         Text("3strandsbeef.com")
                             .font(Theme.captionFont)

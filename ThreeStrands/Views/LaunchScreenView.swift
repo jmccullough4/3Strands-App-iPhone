@@ -3,7 +3,7 @@ import SwiftUI
 struct LaunchScreenView: View {
     var body: some View {
         ZStack {
-            Theme.primary
+            Color.black
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
@@ -22,7 +22,7 @@ struct LaunchScreenView: View {
                     Text("\"A cord of three strands is\nnot quickly broken.\"")
                         .font(.system(size: 16, weight: .medium, design: .serif))
                         .italic()
-                        .foregroundColor(Theme.gold)
+                        .foregroundColor(Theme.bronzeGold)
                         .multilineTextAlignment(.center)
 
                     Text("Ecclesiastes 4:12")
