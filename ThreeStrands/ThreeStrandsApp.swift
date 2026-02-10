@@ -81,18 +81,12 @@ struct ThreeStrandsApp: App {
                 // Schedule background refresh so iOS wakes the app periodically
                 AppDelegate.scheduleBackgroundRefresh()
             }
-            .onReceive(NotificationCenter.default.publisher(for: .dashboardDidUpdate)) { notification in
-                // Refresh when a push notification signals a dashboard update
+            .onReceive(NotificationCenter.default.publisher(for: .dashboardDidUpdate)) { _ in
+                // Refresh when a push notification signals a dashboard update.
+                // refreshSales() calls syncAnnouncementsToInbox() which adds
+                // new items to the inbox — no need to also call addInboxItem()
+                // here, as that would create duplicate inbox entries.
                 Task { await store.refreshSales() }
-
-                // Save to inbox if notification has alert content
-                if let userInfo = notification.userInfo,
-                   let aps = userInfo["aps"] as? [String: Any],
-                   let alert = aps["alert"] as? [String: Any],
-                   let title = alert["title"] as? String,
-                   let body = alert["body"] as? String {
-                    store.addInboxItem(title: title, body: body)
-                }
             }
         }
     }
@@ -163,7 +157,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     }
 
     /// Fetch announcements and flash sales from the dashboard, compare against
-    /// what we've already seen, and fire local notifications for anything new.
+    /// what we've already seen, and update the inbox for anything new.
+    /// Does NOT schedule local notifications — APNs push already delivers the
+    /// visible notification; scheduling a local one here would cause duplicates.
     /// Runs without any UI — safe to call from a background task.
     static func backgroundContentCheck() async {
         let seenAnnouncementKey = "seen_announcement_ids"
@@ -194,7 +190,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                 if !seenAnnouncements.contains(key) {
                     seenAnnouncements.insert(key)
                     inboxItems.insert(InboxItem(title: a.title, body: a.message), at: 0)
-                    await scheduleLocalNotification(title: a.title, body: a.message, id: "bg-\(key)")
                     newCount += 1
                 }
             }
@@ -207,7 +202,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                     let title = "3 Strands Flash Sale!"
                     let body = "\(s.title) — \(s.discountPercent)% off!"
                     inboxItems.insert(InboxItem(title: title, body: body), at: 0)
-                    await scheduleLocalNotification(title: title, body: body, id: "bg-\(key)")
                     newCount += 1
                 }
             }
@@ -219,24 +213,13 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                 }
                 UserDefaults.standard.set(Array(seenAnnouncements), forKey: seenAnnouncementKey)
                 UserDefaults.standard.set(Array(seenSales), forKey: seenFlashSaleKey)
-                print("Background refresh: \(newCount) new notification(s)")
+                print("Background refresh: \(newCount) new inbox item(s)")
             } else {
                 print("Background refresh: no new content")
             }
         } catch {
             print("Background content check failed: \(error)")
         }
-    }
-
-    private static func scheduleLocalNotification(title: String, body: String, id: String) async {
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
-        content.sound = .default
-
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
-        try? await UNUserNotificationCenter.current().add(request)
     }
 
     // MARK: - APNs Token Registration
