@@ -10,11 +10,11 @@ struct FlashSaleCard: View {
             HStack {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Theme.forestGreen.opacity(0.1))
+                        .fill(Theme.bronze.opacity(0.1))
                         .frame(width: 44, height: 44)
                     Image(systemName: sale.imageSystemName)
                         .font(.system(size: 20))
-                        .foregroundColor(Theme.forestGreen)
+                        .foregroundColor(Theme.bronze)
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
@@ -45,7 +45,7 @@ struct FlashSaleCard: View {
             HStack(alignment: .bottom) {
                 Text(sale.formattedSalePrice)
                     .font(.system(size: 22, weight: .bold))
-                    .foregroundColor(Theme.forestGreen)
+                    .foregroundColor(Theme.bronze)
 
                 Text(sale.formattedOriginalPrice)
                     .font(.system(size: 14))
@@ -85,7 +85,7 @@ struct FlashSaleCard: View {
         .overlay(
             RoundedRectangle(cornerRadius: Theme.cornerRadius)
                 .stroke(
-                    sale.isExpired ? Color.clear : Theme.gold.opacity(0.3),
+                    sale.isExpired ? Color.clear : Theme.bronzeGold.opacity(0.3),
                     lineWidth: 1
                 )
         )
@@ -98,11 +98,11 @@ struct FlashSaleCard: View {
             Text(sale.timeRemaining)
                 .font(.system(size: 11, weight: .semibold))
         }
-        .foregroundColor(Theme.gold)
+        .foregroundColor(Theme.bronzeGold)
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
         .background(
-            Capsule().fill(Theme.gold.opacity(0.12))
+            Capsule().fill(Theme.bronzeGold.opacity(0.12))
         )
     }
 }

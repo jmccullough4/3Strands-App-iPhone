@@ -38,6 +38,7 @@ struct NotificationInboxView: View {
                         }
                     }
                     .listStyle(.insetGrouped)
+                    .scrollContentBackground(.hidden)
                 }
             }
             .background(Theme.background)
@@ -67,9 +68,9 @@ struct InboxItemRow: View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: iconForTitle(item.title))
                 .font(.system(size: 20))
-                .foregroundColor(item.isRead ? Theme.textSecondary : Theme.gold)
+                .foregroundColor(item.isRead ? Theme.textSecondary : Theme.bronzeGold)
                 .frame(width: 36, height: 36)
-                .background((item.isRead ? Theme.textSecondary : Theme.gold).opacity(0.1))
+                .background((item.isRead ? Theme.textSecondary : Theme.bronzeGold).opacity(0.1))
                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
             VStack(alignment: .leading, spacing: 4) {

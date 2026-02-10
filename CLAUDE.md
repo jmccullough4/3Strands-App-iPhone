@@ -52,12 +52,14 @@ Push notifications require a physical device - simulator testing is limited.
 
 ## Theme System
 
-Brand colors defined in `Models/Theme.swift`:
-- Primary: Saddle Brown `#8B4513`
-- Secondary: Forest Green `#2C5530`
-- Accent: Gold `#D4AF37`
+Dark theme with copper/bronze accents matching logo and trailer branding. Defined in `Models/Theme.swift`:
+- Primary: Copper `#C07A3E`
+- Secondary: Bronze `#9F714A`
+- Accent: Bronze Gold `#D4A054`
+- Background: Near Black `#0D0D0D`
+- Card Background: Dark Gray `#1C1C1E`
 
-Use `Theme.saddleBrown`, `Theme.forestGreen`, `Theme.gold` for consistency. Corner radius: 14pt, screen padding: 20pt.
+Use `Theme.copper`, `Theme.bronze`, `Theme.bronzeGold` for brand colors, or semantic aliases `Theme.primary`, `Theme.secondary`, `Theme.accent`. App forces `.preferredColorScheme(.dark)`. Corner radius: 14pt, screen padding: 20pt.
 
 ## Testing Notifications
 

@@ -27,6 +27,7 @@ struct PopUpSaleView: View {
                         PopUpSaleRow(sale: sale)
                     }
                     .listStyle(.insetGrouped)
+                    .scrollContentBackground(.hidden)
                 }
             }
             .background(Theme.background)
@@ -63,7 +64,7 @@ struct PopUpSaleRow: View {
                     if let dateStr = sale.startsAt {
                         Text(formatDate(dateStr))
                             .font(.caption)
-                            .foregroundColor(Theme.gold)
+                            .foregroundColor(Theme.bronzeGold)
                     }
                 }
 
@@ -102,7 +103,7 @@ struct PopUpSaleRow: View {
                         .foregroundColor(.white)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
-                        .background(Capsule().fill(Theme.forestGreen))
+                        .background(Capsule().fill(Theme.bronze))
                 }
             }
         }

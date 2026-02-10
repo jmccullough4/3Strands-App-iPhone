@@ -10,7 +10,7 @@ struct ThreeStrandsApp: App {
     @State private var isLaunching = true
 
     init() {
-        // Force light mode and set navigation bar appearance
+        // Dark theme with copper accents matching logo/trailer branding
         let navAppearance = UINavigationBarAppearance()
         navAppearance.configureWithOpaqueBackground()
         navAppearance.backgroundColor = UIColor(Theme.background)
@@ -24,6 +24,13 @@ struct ThreeStrandsApp: App {
         UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
         UINavigationBar.appearance().compactAppearance = navAppearance
         UINavigationBar.appearance().tintColor = UIColor(Theme.primary)
+
+        // Tab bar dark styling
+        let tabAppearance = UITabBarAppearance()
+        tabAppearance.configureWithOpaqueBackground()
+        tabAppearance.backgroundColor = UIColor(Theme.background)
+        UITabBar.appearance().standardAppearance = tabAppearance
+        UITabBar.appearance().scrollEdgeAppearance = tabAppearance
     }
 
     private let refreshTimer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
@@ -49,7 +56,7 @@ struct ThreeStrandsApp: App {
                         .environmentObject(notificationService)
                 }
             }
-            .preferredColorScheme(.light)
+            .preferredColorScheme(.dark)
             .task {
                 // Clear the app icon badge on launch
                 try? await UNUserNotificationCenter.current().setBadgeCount(0)
