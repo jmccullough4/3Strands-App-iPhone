@@ -7,26 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A10000001 /* ThreeStrandsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000001; };
-		A10000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000002; };
-		A10000003 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000003; };
-		A10000004 /* FlashSale.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000004; };
-		A10000005 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000005; };
-		A10000006 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000006; };
-		A10000007 /* FlashSalesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000007; };
-		A10000008 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000008; };
-		A10000009 /* FlashSaleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000009; };
-		A10000010 /* SaleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010; };
-		A10000011 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000011; };
-		A10000012 /* SaleStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000012; };
-		A10000013 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A30000001; };
-		A10000014 /* LaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000013; };
-		A10000015 /* EventsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000014; };
-		A10000016 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000015; };
-		A10000017 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000016; };
-		A10000018 /* PopUpSaleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000017; };
-		A10000019 /* NotificationInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000018; };
-		A10000020 /* SquareService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000019; };
+		A10000001 /* ThreeStrandsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000001 /* ThreeStrandsApp.swift */; };
+		A10000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000002 /* ContentView.swift */; };
+		A10000003 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000003 /* Theme.swift */; };
+		A10000004 /* FlashSale.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000004 /* FlashSale.swift */; };
+		A10000005 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000005 /* NotificationService.swift */; };
+		A10000006 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000006 /* HomeView.swift */; };
+		A10000007 /* FlashSalesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000007 /* FlashSalesView.swift */; };
+		A10000008 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000008 /* SettingsView.swift */; };
+		A10000009 /* FlashSaleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000009 /* FlashSaleCard.swift */; };
+		A10000010 /* SaleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010 /* SaleDetailView.swift */; };
+		A10000011 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000011 /* OnboardingView.swift */; };
+		A10000012 /* SaleStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000012 /* SaleStore.swift */; };
+		A10000013 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A30000001 /* Assets.xcassets */; };
+		A10000014 /* LaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000013 /* LaunchScreenView.swift */; };
+		A10000015 /* EventsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000014 /* EventsView.swift */; };
+		A10000016 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000015 /* APIService.swift */; };
+		A10000017 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000016 /* MenuView.swift */; };
+		A10000018 /* PopUpSaleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000017 /* PopUpSaleView.swift */; };
+		A10000019 /* NotificationInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000018 /* NotificationInboxView.swift */; };
+		A10000020 /* SquareService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000019 /* SquareService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -136,7 +136,7 @@
 /* Begin PBXNativeTarget section */
 		A70000001 /* ThreeStrands */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A80000003;
+			buildConfigurationList = A80000003 /* Build configuration list for PBXNativeTarget "ThreeStrands" */;
 			buildPhases = (
 				A90000001 /* Sources */,
 				A50000001 /* Frameworks */,
@@ -159,14 +159,14 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					A70000001 = {
 						CreatedOnToolsVersion = 15.0;
 					};
 				};
 			};
-			buildConfigurationList = A80000001;
+			buildConfigurationList = A80000001 /* Build configuration list for PBXProject "ThreeStrands" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -253,8 +253,10 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNDECLARED_SELECTOR = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = GM432NV6J6;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -267,6 +269,7 @@
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -274,6 +277,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -308,8 +312,10 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNDECLARED_SELECTOR = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = GM432NV6J6;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -317,12 +323,14 @@
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
@@ -338,7 +346,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ThreeStrands/Preview Content\"";
-				DEVELOPMENT_TEAM = GM432NV6J6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ThreeStrands/Info.plist;
@@ -369,7 +376,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ThreeStrands/Preview Content\"";
-				DEVELOPMENT_TEAM = GM432NV6J6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ThreeStrands/Info.plist;
@@ -394,7 +400,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A80000001 /* Build configuration list for PBXProject */ = {
+		A80000001 /* Build configuration list for PBXProject "ThreeStrands" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A80000002 /* Debug */,
@@ -403,7 +409,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A80000003 /* Build configuration list for PBXNativeTarget */ = {
+		A80000003 /* Build configuration list for PBXNativeTarget "ThreeStrands" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A80000005 /* Debug */,
@@ -413,7 +419,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
 	};
 	rootObject = AA0000001 /* Project object */;
 }
