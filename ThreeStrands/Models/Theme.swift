@@ -1,22 +1,22 @@
 import SwiftUI
 
 // MARK: - 3 Strands Cattle Co. Brand Theme
-// Colors derived from the 3strands-Site: saddle brown, forest green, gold
+// Colors derived from logo/trailer branding: black background with copper/bronze accents
 
 enum Theme {
     // Primary brand colors
-    static let saddleBrown = Color(red: 0.545, green: 0.271, blue: 0.075)
-    static let forestGreen = Color(red: 0.173, green: 0.333, blue: 0.188)
-    static let gold = Color(red: 0.831, green: 0.686, blue: 0.216)
+    static let copper = Color(red: 0.753, green: 0.478, blue: 0.243)       // #C07A3E
+    static let bronze = Color(red: 0.624, green: 0.443, blue: 0.290)       // #9F714A
+    static let bronzeGold = Color(red: 0.831, green: 0.627, blue: 0.329)   // #D4A054
 
     // Semantic colors
-    static let primary = saddleBrown
-    static let secondary = forestGreen
-    static let accent = gold
-    static let background = Color(red: 0.98, green: 0.97, blue: 0.95)
-    static let cardBackground = Color.white
-    static let textPrimary = Color(red: 0.15, green: 0.12, blue: 0.10)
-    static let textSecondary = Color(red: 0.45, green: 0.40, blue: 0.35)
+    static let primary = copper
+    static let secondary = bronze
+    static let accent = bronzeGold
+    static let background = Color(red: 0.051, green: 0.051, blue: 0.051)   // #0D0D0D
+    static let cardBackground = Color(red: 0.110, green: 0.110, blue: 0.118) // #1C1C1E
+    static let textPrimary = Color(red: 0.949, green: 0.929, blue: 0.910)  // #F2EDE8
+    static let textSecondary = Color(red: 0.604, green: 0.565, blue: 0.533) // #9A9088
 
     // Typography
     static let heroFont: Font = .system(size: 32, weight: .bold, design: .serif)

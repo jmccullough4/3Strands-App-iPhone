@@ -108,7 +108,7 @@ struct MenuView: View {
                     VStack(spacing: 16) {
                         Image(systemName: "exclamationmark.triangle")
                             .font(.system(size: 40))
-                            .foregroundColor(Theme.gold)
+                            .foregroundColor(Theme.bronzeGold)
                         Text(error)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
@@ -139,7 +139,7 @@ struct MenuView: View {
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 20)
                                 .padding(.vertical, 12)
-                                .background(Capsule().fill(Theme.forestGreen))
+                                .background(Capsule().fill(Theme.bronze))
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -164,6 +164,7 @@ struct MenuView: View {
                         }
                     }
                     .listStyle(.insetGrouped)
+                    .scrollContentBackground(.hidden)
                 }
             }
             .background(Theme.background)
@@ -250,7 +251,7 @@ struct MenuItemRow: View {
                         }
                         Text(item.formattedPrice)
                             .font(.subheadline.weight(.semibold))
-                            .foregroundColor(Theme.forestGreen)
+                            .foregroundColor(Theme.bronze)
                     }
                 }
             }

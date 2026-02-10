@@ -19,7 +19,7 @@ struct HomeView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {
                                 Image(systemName: "bolt.fill")
-                                    .foregroundColor(Theme.gold)
+                                    .foregroundColor(Theme.bronzeGold)
                                 Text("Live Flash Sales")
                                     .font(Theme.headingFont)
                                     .foregroundColor(Theme.primary)
@@ -70,7 +70,7 @@ struct HomeView: View {
     private var heroBanner: some View {
         ZStack {
             LinearGradient(
-                colors: [Theme.primary, Theme.primary.opacity(0.85)],
+                colors: [Color.black, Theme.cardBackground],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -81,30 +81,34 @@ struct HomeView: View {
                     .scaledToFit()
                     .frame(width: 80, height: 80)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .shadow(color: .black.opacity(0.3), radius: 8, y: 4)
+                    .shadow(color: Theme.primary.opacity(0.3), radius: 8, y: 4)
 
                 Text("3 Strands Cattle Co.")
                     .font(.system(size: 26, weight: .bold, design: .serif))
-                    .foregroundColor(.white)
+                    .foregroundColor(Theme.primary)
 
                 Text("Veteran Owned  •  Faith Driven  •  Florida Sourced")
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(.white.opacity(0.85))
+                    .foregroundColor(Theme.textSecondary)
 
                 if !store.activeSales.isEmpty {
                     Text("\(store.activeSales.count) Flash Sale\(store.activeSales.count == 1 ? "" : "s") Live Now")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(Theme.primary)
+                        .foregroundColor(.white)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
                         .background(
-                            Capsule().fill(Theme.gold)
+                            Capsule().fill(Theme.bronzeGold)
                         )
                         .padding(.top, 4)
                 }
             }
             .padding(.vertical, 32)
         }
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(Theme.primary.opacity(0.3), lineWidth: 1)
+        )
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .padding(.horizontal, Theme.screenPadding)
         .padding(.top, 8)
@@ -139,7 +143,7 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Image(systemName: "mappin.and.ellipse")
-                            .foregroundColor(Theme.gold)
+                            .foregroundColor(Theme.bronzeGold)
                         Text("Pop-Up Sales")
                             .font(Theme.headingFont)
                             .foregroundColor(Theme.primary)
@@ -176,7 +180,7 @@ struct HomeView: View {
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 6)
-                                    .background(Capsule().fill(Theme.forestGreen))
+                                    .background(Capsule().fill(Theme.bronze))
                             }
                             .padding(14)
                             .background(
@@ -227,9 +231,9 @@ struct HomeView: View {
                 .padding(.horizontal, Theme.screenPadding)
 
             VStack(spacing: 10) {
-                linkButton(icon: "globe", title: "Visit Our Website", subtitle: "3strandsbeef.com", color: Theme.forestGreen, urlString: "https://3strandsbeef.com")
+                linkButton(icon: "globe", title: "Visit Our Website", subtitle: "3strandsbeef.com", color: Theme.bronze, urlString: "https://3strandsbeef.com")
                 linkButton(icon: "envelope.fill", title: "Email Us", subtitle: "info@3strands.co", color: Theme.primary, urlString: "mailto:info@3strands.co")
-                linkButton(icon: "phone.fill", title: "Call Us", subtitle: "(863) 799-3300", color: Theme.forestGreen, urlString: "tel:8637993300")
+                linkButton(icon: "phone.fill", title: "Call Us", subtitle: "(863) 799-3300", color: Theme.bronze, urlString: "tel:8637993300")
             }
             .padding(.horizontal, Theme.screenPadding)
         }

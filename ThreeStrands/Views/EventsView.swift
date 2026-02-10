@@ -117,7 +117,7 @@ struct EventsView: View {
 
                 if hasEvent {
                     Circle()
-                        .fill(isSelected ? .white : Theme.forestGreen)
+                        .fill(isSelected ? .white : Theme.bronze)
                         .frame(width: 5, height: 5)
                 } else {
                     Circle()
@@ -171,12 +171,12 @@ struct EventsView: View {
             VStack(spacing: 2) {
                 Image(systemName: event.icon)
                     .font(.system(size: 22))
-                    .foregroundColor(Theme.forestGreen)
+                    .foregroundColor(Theme.bronze)
             }
             .frame(width: 44, height: 44)
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Theme.forestGreen.opacity(0.1))
+                    .fill(Theme.bronze.opacity(0.1))
             )
 
             VStack(alignment: .leading, spacing: 4) {

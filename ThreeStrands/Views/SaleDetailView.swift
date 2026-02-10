@@ -11,7 +11,7 @@ struct SaleDetailView: View {
                 // Hero image area
                 ZStack {
                     LinearGradient(
-                        colors: [Theme.forestGreen, Theme.forestGreen.opacity(0.7)],
+                        colors: [Color.black, Theme.cardBackground],
                         startPoint: .top,
                         endPoint: .bottom
                     )
@@ -19,11 +19,11 @@ struct SaleDetailView: View {
                     VStack(spacing: 16) {
                         Image(systemName: sale.imageSystemName)
                             .font(.system(size: 60))
-                            .foregroundColor(Theme.gold)
+                            .foregroundColor(Theme.bronzeGold)
 
                         Text("\(sale.discountPercent)% OFF")
                             .font(.system(size: 28, weight: .heavy))
-                            .foregroundColor(.white)
+                            .foregroundColor(Theme.bronzeGold)
 
                         if !sale.isExpired {
                             HStack(spacing: 6) {
@@ -31,14 +31,14 @@ struct SaleDetailView: View {
                                 Text(sale.timeRemaining)
                             }
                             .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(Theme.gold)
+                            .foregroundColor(Theme.bronzeGold)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
                             .background(Capsule().fill(.black.opacity(0.2)))
                         } else {
                             Text("Sale Ended")
                                 .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(.white.opacity(0.7))
+                                .foregroundColor(Theme.textSecondary)
                         }
                     }
                     .padding(.vertical, 40)
@@ -70,7 +70,7 @@ struct SaleDetailView: View {
                                 .foregroundColor(Theme.textSecondary)
                             Text(sale.formattedSalePrice)
                                 .font(.system(size: 32, weight: .bold))
-                                .foregroundColor(Theme.forestGreen)
+                                .foregroundColor(Theme.bronze)
                         }
 
                         Spacer()
@@ -88,7 +88,7 @@ struct SaleDetailView: View {
                     .padding(Theme.cardPadding)
                     .background(
                         RoundedRectangle(cornerRadius: Theme.cornerRadius)
-                            .fill(Theme.forestGreen.opacity(0.05))
+                            .fill(Theme.bronze.opacity(0.05))
                     )
 
                     // Weight and price per lb
@@ -110,7 +110,7 @@ struct SaleDetailView: View {
                             Button("Order on 3strands Website") {
                                 // Deep link to Square Online store
                             }
-                            .buttonStyle(BrandButtonStyle(color: Theme.forestGreen))
+                            .buttonStyle(BrandButtonStyle(color: Theme.bronze))
 
                             Button("Send Me a Reminder") {
                                 notificationService.scheduleTestNotification(
