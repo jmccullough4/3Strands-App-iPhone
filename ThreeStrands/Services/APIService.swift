@@ -103,6 +103,11 @@ class APIService {
             "platform": "ios",
             "device_id": DeviceIdentifier.persistentID,
             "device_name": DeviceIdentifier.deviceName,
+            "os_version": DeviceIdentifier.osVersion,
+            "app_version": DeviceIdentifier.appVersion,
+            "device_model": DeviceIdentifier.deviceModel,
+            "locale": DeviceIdentifier.locale,
+            "timezone": DeviceIdentifier.timezone,
             "apns_environment": apnsEnvironment
         ]
         request.httpBody = try JSONEncoder().encode(body)
@@ -381,6 +386,37 @@ enum DeviceIdentifier {
     /// Human-readable device name (e.g. "John's iPhone 15")
     static var deviceName: String {
         UIDevice.current.name
+    }
+
+    /// OS version string (e.g. "17.2")
+    static var osVersion: String {
+        UIDevice.current.systemVersion
+    }
+
+    /// App version from bundle (e.g. "1.3.0")
+    static var appVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+    }
+
+    /// Hardware model identifier (e.g. "iPhone15,2")
+    static var deviceModel: String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        return withUnsafePointer(to: &systemInfo.machine) {
+            $0.withMemoryRebound(to: CChar.self, capacity: 1) {
+                String(validatingUTF8: $0) ?? "Unknown"
+            }
+        }
+    }
+
+    /// User locale identifier (e.g. "en_US")
+    static var locale: String {
+        Locale.current.identifier
+    }
+
+    /// User timezone identifier (e.g. "America/New_York")
+    static var timezone: String {
+        TimeZone.current.identifier
     }
 
     private static func readFromKeychain() -> String? {
