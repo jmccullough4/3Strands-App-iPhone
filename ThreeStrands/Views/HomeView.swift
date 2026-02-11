@@ -79,12 +79,8 @@ struct HomeView: View {
                 Image("Copper")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 100, height: 100)
+                    .frame(width: 115, height: 115)
                     .shadow(color: Theme.primary.opacity(0.3), radius: 8, y: 4)
-
-                Text("Ecclesiastes 4:12")
-                    .font(.system(size: 20, weight: .medium, design: .serif))
-                    .foregroundColor(Theme.bronzeGold)
 
                 Text("Veteran Owned  •  Faith Driven  •  Florida Sourced")
                     .font(.system(size: 13, weight: .medium))
