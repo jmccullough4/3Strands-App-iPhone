@@ -97,6 +97,20 @@ struct EventsView: View {
             }
             .frame(height: 250)
             .clipShape(RoundedRectangle(cornerRadius: Theme.cornerRadius))
+            .overlay(alignment: .bottomTrailing) {
+                Button {
+                    recenterOnUser()
+                } label: {
+                    Image(systemName: "location.fill")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(width: 36, height: 36)
+                        .background(Theme.bronze.opacity(0.9))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .shadow(color: .black.opacity(0.3), radius: 4, y: 2)
+                }
+                .padding(10)
+            }
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.cornerRadius)
                     .stroke(Theme.primary.opacity(0.3), lineWidth: 1)
@@ -299,6 +313,22 @@ struct EventsView: View {
         destination.openInMaps(launchOptions: [
             MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
         ])
+    }
+
+    // MARK: - Map
+
+    private func recenterOnUser() {
+        if let location = locationService.userLocation {
+            withAnimation {
+                cameraPosition = .region(MKCoordinateRegion(
+                    center: location.coordinate,
+                    latitudinalMeters: 5000,
+                    longitudinalMeters: 5000
+                ))
+            }
+        } else {
+            locationService.requestPermission()
+        }
     }
 
     // MARK: - Helpers
