@@ -13,6 +13,8 @@ class LocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
 
     /// Radius in meters for proximity alerts
     private let alertRadius: CLLocationDistance = 500
+    /// Events currently being monitored for proximity
+    private var monitoredEvents: [CattleEvent] = []
 
     override init() {
         super.init()
@@ -30,6 +32,8 @@ class LocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
     // MARK: - Region Monitoring for Events
 
     func startMonitoringEvents(_ events: [CattleEvent]) {
+        monitoredEvents = events
+
         // Clear existing monitored regions
         for region in locationManager.monitoredRegions {
             locationManager.stopMonitoring(for: region)
@@ -75,7 +79,7 @@ class LocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
 
         // Check if there's currently an active event at this location
         let now = Date()
-        let activeAtLocation = CattleEvent.fallback.filter { event in
+        let activeAtLocation = monitoredEvents.filter { event in
             event.title == circularRegion.identifier &&
             event.date <= now &&
             (event.endDate ?? now) >= now
