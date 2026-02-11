@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var store: SaleStore
+    @Binding var showSettings: Bool
     @State private var isRefreshing = false
 
     var body: some View {
@@ -61,6 +62,17 @@ struct HomeView: View {
             .navigationBarTitleDisplayMode(.inline)
             .refreshable {
                 await store.refreshSales()
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showSettings = true
+                    } label: {
+                        Image(systemName: "gearshape.fill")
+                            .font(.system(size: 16))
+                            .foregroundColor(Theme.primary)
+                    }
+                }
             }
         }
     }

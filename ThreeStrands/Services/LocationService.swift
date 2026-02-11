@@ -75,7 +75,7 @@ class LocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
 
         // Check if there's currently an active event at this location
         let now = Date()
-        let activeAtLocation = CattleEvent.upcoming.filter { event in
+        let activeAtLocation = CattleEvent.fallback.filter { event in
             event.title == circularRegion.identifier &&
             event.date <= now &&
             (event.endDate ?? now) >= now

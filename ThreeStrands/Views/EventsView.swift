@@ -5,7 +5,7 @@ import CoreLocation
 // MARK: - Event Model
 
 struct CattleEvent: Identifiable {
-    let id = UUID()
+    let id: Int
     let title: String
     let date: Date
     let endDate: Date?
@@ -22,11 +22,15 @@ struct CattleEvent: Identifiable {
 // MARK: - Events View with Calendar
 
 struct EventsView: View {
-    private let events = CattleEvent.upcoming
+    @EnvironmentObject var store: SaleStore
     @State private var selectedDate = Date()
     @State private var displayedMonth = Date()
     @StateObject private var locationService = LocationService.shared
     @State private var cameraPosition: MapCameraPosition = .automatic
+
+    private var events: [CattleEvent] {
+        store.events.isEmpty ? CattleEvent.fallback : store.events
+    }
 
     private let calendar = Calendar.current
     private let daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
@@ -334,45 +338,12 @@ struct EventsView: View {
     }
 }
 
-// MARK: - Real Events from 3strandsbeef.com
+// MARK: - Fallback Events (used when dashboard API is unavailable)
 
 extension CattleEvent {
-    // NOTE: Update latitude/longitude for each event here.
-    // Current coordinates are approximate — replace with exact values.
-    static let upcoming: [CattleEvent] = [
-        // February 2026
-        CattleEvent(title: "Lauderdale by the Sea Market", date: makeDate(2026, 2, 1, 9, 0), endDate: makeDate(2026, 2, 1, 13, 0), location: "4500 El Mar Dr., Lauderdale-by-the-Sea", latitude: 26.1934, longitude: -80.0962, icon: "leaf.fill"),
-        CattleEvent(title: "Olive Branch Market", date: makeDate(2026, 2, 6, 16, 0), endDate: makeDate(2026, 2, 6, 19, 0), location: "3750 NE Indian River Dr.", latitude: 27.2506, longitude: -80.2289, icon: "leaf.fill"),
-        CattleEvent(title: "Lauderdale by the Sea Market", date: makeDate(2026, 2, 8, 9, 0), endDate: makeDate(2026, 2, 8, 13, 0), location: "4500 El Mar Dr., Lauderdale-by-the-Sea", latitude: 26.1934, longitude: -80.0962, icon: "leaf.fill"),
-        CattleEvent(title: "Olive Branch Market", date: makeDate(2026, 2, 13, 16, 0), endDate: makeDate(2026, 2, 13, 19, 0), location: "3750 NE Indian River Dr.", latitude: 27.2506, longitude: -80.2289, icon: "leaf.fill"),
-        CattleEvent(title: "Lauderdale by the Sea Market", date: makeDate(2026, 2, 15, 9, 0), endDate: makeDate(2026, 2, 15, 13, 0), location: "4500 El Mar Dr., Lauderdale-by-the-Sea", latitude: 26.1934, longitude: -80.0962, icon: "leaf.fill"),
-        CattleEvent(title: "Olive Branch Market", date: makeDate(2026, 2, 20, 16, 0), endDate: makeDate(2026, 2, 20, 19, 0), location: "3750 NE Indian River Dr.", latitude: 27.2506, longitude: -80.2289, icon: "leaf.fill"),
-        CattleEvent(title: "Lauderdale by the Sea Market", date: makeDate(2026, 2, 22, 9, 0), endDate: makeDate(2026, 2, 22, 13, 0), location: "4500 El Mar Dr., Lauderdale-by-the-Sea", latitude: 26.1934, longitude: -80.0962, icon: "leaf.fill"),
-        CattleEvent(title: "Olive Branch Market", date: makeDate(2026, 2, 27, 16, 0), endDate: makeDate(2026, 2, 27, 19, 0), location: "3750 NE Indian River Dr.", latitude: 27.2506, longitude: -80.2289, icon: "leaf.fill"),
-
-        // March 2026
-        CattleEvent(title: "Lauderdale by the Sea Market", date: makeDate(2026, 3, 1, 9, 0), endDate: makeDate(2026, 3, 1, 13, 0), location: "4500 El Mar Dr., Lauderdale-by-the-Sea", latitude: 26.1934, longitude: -80.0962, icon: "leaf.fill"),
-        CattleEvent(title: "Olive Branch Market", date: makeDate(2026, 3, 6, 16, 0), endDate: makeDate(2026, 3, 6, 19, 0), location: "3750 NE Indian River Dr.", latitude: 27.2506, longitude: -80.2289, icon: "leaf.fill"),
-        CattleEvent(title: "Lauderdale by the Sea Market", date: makeDate(2026, 3, 8, 9, 0), endDate: makeDate(2026, 3, 8, 13, 0), location: "4500 El Mar Dr., Lauderdale-by-the-Sea", latitude: 26.1934, longitude: -80.0962, icon: "leaf.fill"),
-        CattleEvent(title: "Olive Branch Market", date: makeDate(2026, 3, 13, 16, 0), endDate: makeDate(2026, 3, 13, 19, 0), location: "3750 NE Indian River Dr.", latitude: 27.2506, longitude: -80.2289, icon: "leaf.fill"),
-        CattleEvent(title: "Lauderdale by the Sea Market", date: makeDate(2026, 3, 15, 9, 0), endDate: makeDate(2026, 3, 15, 13, 0), location: "4500 El Mar Dr., Lauderdale-by-the-Sea", latitude: 26.1934, longitude: -80.0962, icon: "leaf.fill"),
-        CattleEvent(title: "Olive Branch Market", date: makeDate(2026, 3, 20, 16, 0), endDate: makeDate(2026, 3, 20, 19, 0), location: "3750 NE Indian River Dr.", latitude: 27.2506, longitude: -80.2289, icon: "leaf.fill"),
-        CattleEvent(title: "Lauderdale by the Sea Market", date: makeDate(2026, 3, 22, 9, 0), endDate: makeDate(2026, 3, 22, 13, 0), location: "4500 El Mar Dr., Lauderdale-by-the-Sea", latitude: 26.1934, longitude: -80.0962, icon: "leaf.fill"),
-        CattleEvent(title: "Olive Branch Market", date: makeDate(2026, 3, 27, 16, 0), endDate: makeDate(2026, 3, 27, 19, 0), location: "3750 NE Indian River Dr.", latitude: 27.2506, longitude: -80.2289, icon: "leaf.fill"),
-        CattleEvent(title: "Lauderdale by the Sea Market", date: makeDate(2026, 3, 29, 9, 0), endDate: makeDate(2026, 3, 29, 13, 0), location: "4500 El Mar Dr., Lauderdale-by-the-Sea", latitude: 26.1934, longitude: -80.0962, icon: "leaf.fill"),
-
-        // April 2026
-        CattleEvent(title: "Olive Branch Market", date: makeDate(2026, 4, 3, 16, 0), endDate: makeDate(2026, 4, 3, 19, 0), location: "3750 NE Indian River Dr.", latitude: 27.2506, longitude: -80.2289, icon: "leaf.fill"),
-        CattleEvent(title: "Lauderdale by the Sea Market", date: makeDate(2026, 4, 5, 9, 0), endDate: makeDate(2026, 4, 5, 13, 0), location: "4500 El Mar Dr., Lauderdale-by-the-Sea", latitude: 26.1934, longitude: -80.0962, icon: "leaf.fill"),
-        CattleEvent(title: "Olive Branch Market", date: makeDate(2026, 4, 10, 16, 0), endDate: makeDate(2026, 4, 10, 19, 0), location: "3750 NE Indian River Dr.", latitude: 27.2506, longitude: -80.2289, icon: "leaf.fill"),
-        CattleEvent(title: "Lauderdale by the Sea Market", date: makeDate(2026, 4, 12, 9, 0), endDate: makeDate(2026, 4, 12, 13, 0), location: "4500 El Mar Dr., Lauderdale-by-the-Sea", latitude: 26.1934, longitude: -80.0962, icon: "leaf.fill"),
-        CattleEvent(title: "Olive Branch Market", date: makeDate(2026, 4, 17, 16, 0), endDate: makeDate(2026, 4, 17, 19, 0), location: "3750 NE Indian River Dr.", latitude: 27.2506, longitude: -80.2289, icon: "leaf.fill"),
-        CattleEvent(title: "Lauderdale by the Sea Market", date: makeDate(2026, 4, 19, 9, 0), endDate: makeDate(2026, 4, 19, 13, 0), location: "4500 El Mar Dr., Lauderdale-by-the-Sea", latitude: 26.1934, longitude: -80.0962, icon: "leaf.fill"),
-        CattleEvent(title: "Olive Branch Market", date: makeDate(2026, 4, 24, 16, 0), endDate: makeDate(2026, 4, 24, 19, 0), location: "3750 NE Indian River Dr.", latitude: 27.2506, longitude: -80.2289, icon: "leaf.fill"),
-        CattleEvent(title: "Lauderdale by the Sea Market", date: makeDate(2026, 4, 26, 9, 0), endDate: makeDate(2026, 4, 26, 13, 0), location: "4500 El Mar Dr., Lauderdale-by-the-Sea", latitude: 26.1934, longitude: -80.0962, icon: "leaf.fill"),
-
-        // May 2026
-        CattleEvent(title: "Olive Branch Market", date: makeDate(2026, 5, 1, 16, 0), endDate: makeDate(2026, 5, 1, 19, 0), location: "3750 NE Indian River Dr.", latitude: 27.2506, longitude: -80.2289, icon: "leaf.fill"),
+    static let fallback: [CattleEvent] = [
+        CattleEvent(id: -1, title: "Lauderdale by the Sea Market", date: makeDate(2026, 2, 15, 9, 0), endDate: makeDate(2026, 2, 15, 13, 0), location: "4500 El Mar Dr., Lauderdale-by-the-Sea", latitude: 26.1934, longitude: -80.0962, icon: "leaf.fill"),
+        CattleEvent(id: -2, title: "Olive Branch Market", date: makeDate(2026, 2, 20, 16, 0), endDate: makeDate(2026, 2, 20, 19, 0), location: "3750 NE Indian River Dr.", latitude: 27.2506, longitude: -80.2289, icon: "leaf.fill"),
     ]
 
     private static func makeDate(_ year: Int, _ month: Int, _ day: Int, _ hour: Int, _ minute: Int) -> Date {

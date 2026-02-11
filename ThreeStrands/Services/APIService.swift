@@ -71,6 +71,21 @@ class APIService {
         return try decoder.decode([Announcement].self, from: data)
     }
 
+    // MARK: - Events (from dashboard — snake_case JSON)
+
+    func fetchEvents() async throws -> [CattleEvent] {
+        let url = URL(string: "\(dashboardURL)/api/public/events")!
+        let (data, response) = try await session.data(from: url)
+        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+            throw APIError.serverError
+        }
+        print("Events raw: \(String(data: data, encoding: .utf8) ?? "nil")")
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let apiEvents = try decoder.decode([APIEvent].self, from: data)
+        return apiEvents.map { $0.toCattleEvent() }
+    }
+
     // MARK: - Device Registration (to dashboard)
 
     func registerDevice(token: String) async throws {
@@ -297,6 +312,54 @@ struct Announcement: Identifiable, Codable {
         display.dateStyle = .medium
         display.timeStyle = .short
         return display.string(from: date)
+    }
+}
+
+// MARK: - Event API Model
+// Dashboard sends snake_case: id (int), title, description, location,
+// latitude, longitude, start_date, end_date, icon, is_active
+
+struct APIEvent: Codable {
+    let id: Int
+    let title: String
+    let description: String?
+    let location: String?
+    let latitude: Double?
+    let longitude: Double?
+    let startDate: String?
+    let endDate: String?
+    let icon: String?
+    let isActive: Bool
+
+    func toCattleEvent() -> CattleEvent {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        formatter.timeZone = .current
+
+        let fractionalFormatter = DateFormatter()
+        fractionalFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+        fractionalFormatter.timeZone = .current
+
+        let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withInternetDateTime]
+
+        func parseDate(_ s: String?) -> Date? {
+            guard let s else { return nil }
+            return formatter.date(from: s)
+                ?? fractionalFormatter.date(from: s)
+                ?? iso.date(from: s)
+        }
+
+        return CattleEvent(
+            id: id,
+            title: title,
+            date: parseDate(startDate) ?? Date(),
+            endDate: parseDate(endDate),
+            location: location ?? "",
+            latitude: latitude ?? 0,
+            longitude: longitude ?? 0,
+            icon: icon ?? "calendar.fill"
+        )
     }
 }
 
