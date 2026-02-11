@@ -9,11 +9,10 @@ struct LaunchScreenView: View {
             VStack(spacing: 0) {
                 Spacer()
 
-                Image("Appicon")
+                Image("Copper")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 150, height: 150)
-                    .clipShape(RoundedRectangle(cornerRadius: 30))
+                    .frame(width: 188, height: 188)
                     .shadow(color: .black.opacity(0.3), radius: 15, y: 8)
 
                 Spacer()

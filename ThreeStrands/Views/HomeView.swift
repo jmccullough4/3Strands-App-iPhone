@@ -76,16 +76,15 @@ struct HomeView: View {
             )
 
             VStack(spacing: 12) {
-                Image("Appicon")
+                Image("Copper")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 80, height: 80)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .frame(width: 100, height: 100)
                     .shadow(color: Theme.primary.opacity(0.3), radius: 8, y: 4)
 
-                Text("3 Strands Cattle Co.")
-                    .font(.system(size: 26, weight: .bold, design: .serif))
-                    .foregroundColor(Theme.primary)
+                Text("Ecclesiastes 4:12")
+                    .font(.system(size: 20, weight: .medium, design: .serif))
+                    .foregroundColor(Theme.bronzeGold)
 
                 Text("Veteran Owned  •  Faith Driven  •  Florida Sourced")
                     .font(.system(size: 13, weight: .medium))
