@@ -3,10 +3,11 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject var store: SaleStore
     @State private var selectedTab = 0
+    @State private var showSettings = false
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            HomeView()
+            HomeView(showSettings: $showSettings)
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                 }
@@ -37,14 +38,13 @@ struct ContentView: View {
                     Label("Events", systemImage: "calendar")
                 }
                 .tag(4)
-
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape.fill")
-                }
-                .tag(5)
         }
         .tint(Theme.primary)
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
+                .environmentObject(store)
+                .environmentObject(NotificationService.shared)
+        }
         .task {
             await store.refreshSales()
         }

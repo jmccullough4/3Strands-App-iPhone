@@ -38,6 +38,7 @@ class SaleStore: ObservableObject {
     @Published var sales: [FlashSale] = []
     @Published var popUpSales: [PopUpSale] = []
     @Published var announcements: [Announcement] = []
+    @Published var events: [CattleEvent] = []
     @Published var inboxItems: [InboxItem] = []
     @Published var isLoading = false
     @Published var notificationPrefs: NotificationPreferences
@@ -173,11 +174,13 @@ class SaleStore: ObservableObject {
             async let flashSalesTask = APIService.shared.fetchFlashSales()
             async let popUpSalesTask = APIService.shared.fetchPopUpSales()
             async let announcementsTask = APIService.shared.fetchAnnouncements()
+            async let eventsTask = APIService.shared.fetchEvents()
 
-            let (fetchedSales, fetchedPopUps, fetchedAnnouncements) = try await (flashSalesTask, popUpSalesTask, announcementsTask)
+            let (fetchedSales, fetchedPopUps, fetchedAnnouncements, fetchedEvents) = try await (flashSalesTask, popUpSalesTask, announcementsTask, eventsTask)
             sales = fetchedSales
             popUpSales = fetchedPopUps
             announcements = fetchedAnnouncements
+            events = fetchedEvents
         } catch {
             // Fetch individually so one failure doesn't block the others
             do {
@@ -194,6 +197,11 @@ class SaleStore: ObservableObject {
                 announcements = try await APIService.shared.fetchAnnouncements()
             } catch {
                 print("Announcements fetch failed: \(error.localizedDescription)")
+            }
+            do {
+                events = try await APIService.shared.fetchEvents()
+            } catch {
+                print("Events fetch failed: \(error.localizedDescription)")
             }
         }
         isLoading = false

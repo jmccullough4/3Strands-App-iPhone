@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var store: SaleStore
     @EnvironmentObject var notificationService: NotificationService
     @State private var showTestAlert = false
@@ -136,6 +137,14 @@ struct SettingsView: View {
             .background(Theme.background)
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                    .foregroundColor(Theme.primary)
+                }
+            }
             .alert("Test Sent!", isPresented: $showTestAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
