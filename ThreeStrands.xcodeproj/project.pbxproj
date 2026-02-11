@@ -27,6 +27,7 @@
 		A10000018 /* PopUpSaleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000017 /* PopUpSaleView.swift */; };
 		A10000019 /* NotificationInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000018 /* NotificationInboxView.swift */; };
 		A10000020 /* SquareService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000019 /* SquareService.swift */; };
+		A10000021 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000020 /* LocationService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 		A20000017 /* PopUpSaleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpSaleView.swift; sourceTree = "<group>"; };
 		A20000018 /* NotificationInboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationInboxView.swift; sourceTree = "<group>"; };
 		A20000019 /* SquareService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SquareService.swift; sourceTree = "<group>"; };
+		A20000020 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		A30000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A40000001 /* ThreeStrands.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThreeStrands.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -127,6 +129,7 @@
 				A20000005 /* NotificationService.swift */,
 				A20000015 /* APIService.swift */,
 				A20000019 /* SquareService.swift */,
+				A20000020 /* LocationService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -219,6 +222,7 @@
 				A10000018 /* PopUpSaleView.swift in Sources */,
 				A10000019 /* NotificationInboxView.swift in Sources */,
 				A10000020 /* SquareService.swift in Sources */,
+				A10000021 /* LocationService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
