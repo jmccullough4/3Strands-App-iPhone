@@ -1,5 +1,6 @@
 import SwiftUI
 import BackgroundTasks
+import CoreLocation
 
 @main
 struct ThreeStrandsApp: App {
@@ -41,7 +42,7 @@ struct ThreeStrandsApp: App {
                 if isLaunching {
                     LaunchScreenView()
                         .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                                 withAnimation(.easeOut(duration: 0.4)) {
                                     isLaunching = false
                                 }
@@ -64,10 +65,14 @@ struct ThreeStrandsApp: App {
                 // This ensures the dashboard always has a valid APNs token on file,
                 // rather than overwriting it with a non-APNs device identifier.
                 await notificationService.reRegisterStoredToken()
-                // Only request push after onboarding is done — let the onboarding
+                // Only request permissions after onboarding is done — let the onboarding
                 // flow handle the initial prompt so the user understands WHY first.
                 if hasCompletedOnboarding {
                     await notificationService.ensurePushRegistration()
+                    // Ensure location permission is requested if not yet determined
+                    if LocationService.shared.authorizationStatus == .notDetermined {
+                        LocationService.shared.requestPermission()
+                    }
                 }
             }
             .onReceive(refreshTimer) { _ in

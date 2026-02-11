@@ -78,8 +78,16 @@ struct EventsView: View {
 
             Map(position: $cameraPosition) {
                 ForEach(uniqueLocations) { event in
-                    Marker(event.title, coordinate: event.coordinate)
-                        .tint(Theme.primary)
+                    Annotation(event.title, coordinate: event.coordinate) {
+                        Button {
+                            openDirections(to: event)
+                        } label: {
+                            Image(systemName: "mappin.circle.fill")
+                                .font(.system(size: 32))
+                                .foregroundColor(Theme.primary)
+                                .background(Circle().fill(.white).frame(width: 20, height: 20))
+                        }
+                    }
                 }
                 UserAnnotation()
             }
@@ -259,6 +267,17 @@ struct EventsView: View {
             }
 
             Spacer()
+
+            Button {
+                openDirections(to: event)
+            } label: {
+                Image(systemName: "arrow.triangle.turn.up.right.diamond.fill")
+                    .font(.system(size: 20))
+                    .foregroundColor(.white)
+                    .frame(width: 40, height: 40)
+                    .background(Theme.bronze)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
         }
         .padding(14)
         .background(
@@ -266,6 +285,16 @@ struct EventsView: View {
                 .fill(Theme.cardBackground)
                 .shadow(color: .black.opacity(0.05), radius: 8, y: 4)
         )
+    }
+
+    // MARK: - Directions
+
+    private func openDirections(to event: CattleEvent) {
+        let destination = MKMapItem(placemark: MKPlacemark(coordinate: event.coordinate))
+        destination.name = event.title
+        destination.openInMaps(launchOptions: [
+            MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
+        ])
     }
 
     // MARK: - Helpers

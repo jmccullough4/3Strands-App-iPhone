@@ -1,8 +1,10 @@
 import SwiftUI
+import CoreLocation
 
 struct OnboardingView: View {
     @Binding var hasCompletedOnboarding: Bool
     @EnvironmentObject var notificationService: NotificationService
+    @StateObject private var locationService = LocationService.shared
     @State private var currentPage = 0
 
     var body: some View {
@@ -53,7 +55,7 @@ struct OnboardingView: View {
                     )
                     .tag(1)
 
-                    // Page 3: Notifications
+                    // Page 3: Enable All Permissions
                     VStack(spacing: 24) {
                         Spacer()
 
@@ -64,6 +66,11 @@ struct OnboardingView: View {
                             Image(systemName: "bell.badge.fill")
                                 .font(.system(size: 50))
                                 .foregroundColor(Theme.primary)
+                                .offset(x: -12, y: -8)
+                            Image(systemName: "location.fill")
+                                .font(.system(size: 28))
+                                .foregroundColor(Theme.bronzeGold)
+                                .offset(x: 22, y: 18)
                         }
 
                         Text("Stay in the Loop")
@@ -76,7 +83,7 @@ struct OnboardingView: View {
                             .foregroundColor(Theme.primary)
                             .multilineTextAlignment(.center)
 
-                        Text("Flash sales, pop-up locations, and announcements are all pushed directly to your phone. Turn on notifications so you never miss a deal or a chance to grab fresh beef near you.")
+                        Text("Enable notifications for flash sales, pop-up locations, and announcements. Allow location access so we can alert you when we're selling near you.")
                             .font(Theme.bodyFont)
                             .foregroundColor(Theme.textSecondary)
                             .multilineTextAlignment(.center)
@@ -85,9 +92,12 @@ struct OnboardingView: View {
                         Spacer()
 
                         VStack(spacing: 12) {
-                            Button("Turn On Notifications") {
+                            Button("Enable All") {
                                 Task {
+                                    // Request notification permission
                                     let _ = await notificationService.requestAuthorization()
+                                    // Request location permission
+                                    locationService.requestPermission()
                                     hasCompletedOnboarding = true
                                 }
                             }

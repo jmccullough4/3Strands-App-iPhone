@@ -3,7 +3,6 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var store: SaleStore
     @State private var isRefreshing = false
-    @State private var logoAppeared = false
 
     var body: some View {
         NavigationStack {
@@ -81,14 +80,7 @@ struct HomeView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 132, height: 132)
-                    .scaleEffect(logoAppeared ? 1.0 : 3.0)
-                    .opacity(logoAppeared ? 1.0 : 0)
                     .shadow(color: Theme.primary.opacity(0.3), radius: 8, y: 4)
-                    .onAppear {
-                        withAnimation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0)) {
-                            logoAppeared = true
-                        }
-                    }
 
                 Text("Veteran Owned  •  Faith Driven  •  Florida Sourced")
                     .font(.system(size: 13, weight: .medium))
