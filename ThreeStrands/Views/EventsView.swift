@@ -29,7 +29,7 @@ struct EventsView: View {
     @State private var cameraPosition: MapCameraPosition = .automatic
 
     private var events: [CattleEvent] {
-        store.events.isEmpty ? CattleEvent.fallback : store.events
+        store.events
     }
 
     private let calendar = Calendar.current
@@ -365,24 +365,5 @@ struct EventsView: View {
         }
 
         return days
-    }
-}
-
-// MARK: - Fallback Events (used when dashboard API is unavailable)
-
-extension CattleEvent {
-    static let fallback: [CattleEvent] = [
-        CattleEvent(id: -1, title: "Lauderdale by the Sea Market", date: makeDate(2026, 2, 15, 9, 0), endDate: makeDate(2026, 2, 15, 13, 0), location: "4500 El Mar Dr., Lauderdale-by-the-Sea", latitude: 26.1934, longitude: -80.0962, icon: "leaf.fill"),
-        CattleEvent(id: -2, title: "Olive Branch Market", date: makeDate(2026, 2, 20, 16, 0), endDate: makeDate(2026, 2, 20, 19, 0), location: "3750 NE Indian River Dr.", latitude: 27.2506, longitude: -80.2289, icon: "leaf.fill"),
-    ]
-
-    private static func makeDate(_ year: Int, _ month: Int, _ day: Int, _ hour: Int, _ minute: Int) -> Date {
-        var components = DateComponents()
-        components.year = year
-        components.month = month
-        components.day = day
-        components.hour = hour
-        components.minute = minute
-        return Calendar.current.date(from: components) ?? Date()
     }
 }

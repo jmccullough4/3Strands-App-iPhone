@@ -1,13 +1,13 @@
 {
   "images" : [
     {
-      "filename" : "10-1024.png",
+      "filename" : "apple_app_store_1024x1024.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
     },
     {
-      "filename" : "AppStore-1024x1024.png",
+      "filename" : "apple_app_store_1024x1024 1.png",
       "idiom" : "ios-marketing",
       "scale" : "1x",
       "size" : "1024x1024"

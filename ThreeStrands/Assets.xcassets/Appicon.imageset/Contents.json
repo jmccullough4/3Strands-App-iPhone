@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "1024.png",
+      "filename" : "apple_app_store_1024x1024.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "ipad_app_152x152.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "ipad_app_167x167.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
