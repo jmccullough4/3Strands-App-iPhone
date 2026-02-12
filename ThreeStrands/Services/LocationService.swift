@@ -91,7 +91,9 @@ class LocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        #if DEBUG
         print("LocationService error: \(error.localizedDescription)")
+        #endif
     }
 
     // MARK: - Proximity Notification

@@ -152,7 +152,9 @@ class SaleStore: ObservableObject {
             // Include created_at in the key so updated/recreated announcements are treated as new
             let announcementKey = "announcement-\(announcement.id)-\(announcement.createdAt ?? "")"
             if !seenIDs.contains(announcementKey) {
+                #if DEBUG
                 print("NEW announcement detected: id=\(announcement.id), title=\(announcement.title), key=\(announcementKey)")
+                #endif
                 let item = InboxItem(title: announcement.title, body: announcement.message)
                 inboxItems.insert(item, at: 0)
                 seenIDs.insert(announcementKey)
@@ -186,22 +188,30 @@ class SaleStore: ObservableObject {
             do {
                 sales = try await APIService.shared.fetchFlashSales()
             } catch {
+                #if DEBUG
                 print("Flash sales fetch failed: \(error.localizedDescription)")
+                #endif
             }
             do {
                 popUpMarkets = try await APIService.shared.fetchPopUpMarkets()
             } catch {
+                #if DEBUG
                 print("Pop-up markets fetch failed: \(error.localizedDescription)")
+                #endif
             }
             do {
                 announcements = try await APIService.shared.fetchAnnouncements()
             } catch {
+                #if DEBUG
                 print("Announcements fetch failed: \(error.localizedDescription)")
+                #endif
             }
             do {
                 events = try await APIService.shared.fetchEvents()
             } catch {
+                #if DEBUG
                 print("Events fetch failed: \(error.localizedDescription)")
+                #endif
             }
         }
         isLoading = false

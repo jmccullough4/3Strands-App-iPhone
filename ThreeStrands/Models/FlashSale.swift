@@ -89,8 +89,9 @@ struct NotificationPreferences: Codable {
     static let storageKey = "notification_preferences"
 }
 
-// MARK: - Sample Data
+// MARK: - Sample Data (Debug / Preview only)
 
+#if DEBUG
 extension FlashSale {
     static let samples: [FlashSale] = [
         FlashSale(
@@ -160,3 +161,4 @@ extension FlashSale {
         ),
     ]
 }
+#endif

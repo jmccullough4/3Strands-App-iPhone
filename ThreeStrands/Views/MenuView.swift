@@ -211,7 +211,9 @@ struct MenuView: View {
             }
         } catch {
             errorMessage = error.localizedDescription
+            #if DEBUG
             print("Catalog fetch error: \(error)")
+            #endif
         }
         isLoading = false
     }

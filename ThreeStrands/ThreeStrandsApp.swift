@@ -143,9 +143,13 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
         do {
             try BGTaskScheduler.shared.submit(request)
+            #if DEBUG
             print("Background refresh scheduled")
+            #endif
         } catch {
+            #if DEBUG
             print("Could not schedule background refresh: \(error)")
+            #endif
         }
     }
 
@@ -225,12 +229,18 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                 }
                 UserDefaults.standard.set(Array(seenAnnouncements), forKey: seenAnnouncementKey)
                 UserDefaults.standard.set(Array(seenSales), forKey: seenFlashSaleKey)
+                #if DEBUG
                 print("Background refresh: \(newCount) new inbox item(s)")
+                #endif
             } else {
+                #if DEBUG
                 print("Background refresh: no new content")
+                #endif
             }
         } catch {
+            #if DEBUG
             print("Background content check failed: \(error)")
+            #endif
         }
     }
 
@@ -247,7 +257,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         _ application: UIApplication,
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
+        #if DEBUG
         print("Failed to register for remote notifications: \(error.localizedDescription)")
+        #endif
     }
 
     // Handle silent push / content-available for background refresh

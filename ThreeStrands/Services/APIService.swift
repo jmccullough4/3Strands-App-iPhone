@@ -9,7 +9,11 @@ class APIService {
     static let shared = APIService()
 
     var dashboardURL: String {
-        UserDefaults.standard.string(forKey: "api_base_url") ?? "https://dashboard.3strands.co"
+        #if DEBUG
+        return UserDefaults.standard.string(forKey: "api_base_url") ?? "https://dashboard.3strands.co"
+        #else
+        return "https://dashboard.3strands.co"
+        #endif
     }
 
     private let session: URLSession
@@ -29,7 +33,9 @@ class APIService {
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw APIError.serverError
         }
+        #if DEBUG
         print("Flash sales raw: \(String(data: data, encoding: .utf8) ?? "nil")")
+        #endif
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         let apiSales = try decoder.decode([APIFlashSale].self, from: data)
@@ -51,7 +57,9 @@ class APIService {
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw APIError.serverError
         }
+        #if DEBUG
         print("Pop-up sales raw: \(String(data: data, encoding: .utf8) ?? "nil")")
+        #endif
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         return try decoder.decode([PopUpSale].self, from: data)
@@ -65,7 +73,9 @@ class APIService {
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw APIError.serverError
         }
+        #if DEBUG
         print("Announcements raw: \(String(data: data, encoding: .utf8) ?? "nil")")
+        #endif
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         return try decoder.decode([Announcement].self, from: data)
@@ -79,7 +89,9 @@ class APIService {
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw APIError.serverError
         }
+        #if DEBUG
         print("Events raw: \(String(data: data, encoding: .utf8) ?? "nil")")
+        #endif
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         let apiEvents = try decoder.decode([APIEvent].self, from: data)
@@ -111,11 +123,15 @@ class APIService {
             "apns_environment": apnsEnvironment
         ]
         request.httpBody = try JSONEncoder().encode(body)
+        #if DEBUG
         print("Register device request: token=\(token.prefix(20))..., device_id=\(DeviceIdentifier.persistentID), device_name=\(DeviceIdentifier.deviceName)")
+        #endif
         let (data, response) = try await session.data(for: request)
         if let http = response as? HTTPURLResponse {
+            #if DEBUG
             let responseBody = String(data: data, encoding: .utf8) ?? "nil"
             print("Register device response: \(http.statusCode) - \(responseBody)")
+            #endif
             guard http.statusCode == 200 else {
                 throw APIError.serverError
             }

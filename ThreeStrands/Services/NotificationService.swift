@@ -38,7 +38,9 @@ class NotificationService: NSObject, ObservableObject {
 
             return granted
         } catch {
+            #if DEBUG
             print("Notification authorization error: \(error.localizedDescription)")
+            #endif
             return false
         }
     }
@@ -80,7 +82,9 @@ class NotificationService: NSObject, ObservableObject {
             await registerForRemoteNotifications()
         case .denied:
             // User explicitly denied — nothing we can do from code
+            #if DEBUG
             print("Push notifications denied by user. They must enable in iOS Settings.")
+            #endif
         @unknown default:
             break
         }
@@ -97,7 +101,9 @@ class NotificationService: NSObject, ObservableObject {
 
     func didRegisterForRemoteNotifications(deviceToken data: Data) {
         let token = data.map { String(format: "%02.2hhx", $0) }.joined()
+        #if DEBUG
         print("APNs Device Token: \(token)")
+        #endif
 
         Task { @MainActor in
             self.deviceToken = token
@@ -117,10 +123,14 @@ class NotificationService: NSObject, ObservableObject {
         for attempt in 1...3 {
             do {
                 try await APIService.shared.registerDevice(token: token)
+                #if DEBUG
                 print("APNs token registered with dashboard (attempt \(attempt))")
+                #endif
                 return
             } catch {
+                #if DEBUG
                 print("Failed to register APNs token (attempt \(attempt)/3): \(error.localizedDescription)")
+                #endif
                 if attempt < 3 {
                     try? await Task.sleep(nanoseconds: UInt64(attempt) * 2_000_000_000)
                 }
@@ -134,7 +144,9 @@ class NotificationService: NSObject, ObservableObject {
     @MainActor
     func reRegisterStoredToken() async {
         guard let token = deviceToken else {
+            #if DEBUG
             print("No persisted APNs token yet — will register when iOS provides one")
+            #endif
             return
         }
         await sendTokenToDashboard(token)

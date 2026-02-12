@@ -92,7 +92,8 @@ struct SettingsView: View {
                     Text("Only get notified about flash sales for cuts you care about.")
                 }
 
-                // Test & Info
+                #if DEBUG
+                // Test notification — hidden in release builds
                 Section {
                     Button {
                         notificationService.scheduleTestNotification(
@@ -106,6 +107,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Testing")
                 }
+                #endif
 
                 // About
                 Section {
