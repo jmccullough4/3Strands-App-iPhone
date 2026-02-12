@@ -106,7 +106,9 @@ class SquareService {
             }
 
             if http.statusCode != 200 {
+                #if DEBUG
                 print("Square API error: \(http.statusCode) - \(String(data: data, encoding: .utf8) ?? "nil")")
+                #endif
                 throw APIError.serverError
             }
 
@@ -141,7 +143,9 @@ class SquareService {
             cursor = catalogResponse.cursor
         } while cursor != nil
 
+        #if DEBUG
         print("Square catalog fetched: \(allItems.count) items, \(allVariationIds.count) variations")
+        #endif
 
         // Step 2: Fetch inventory counts for all variations
         let inventoryCounts = try await fetchInventoryCounts(catalogObjectIds: allVariationIds)
@@ -190,7 +194,9 @@ class SquareService {
             guard let http = response as? HTTPURLResponse else { continue }
 
             if http.statusCode != 200 {
+                #if DEBUG
                 print("Square Inventory API error: \(http.statusCode) - \(String(data: data, encoding: .utf8) ?? "nil")")
+                #endif
                 continue
             }
 
@@ -203,7 +209,9 @@ class SquareService {
             }
         }
 
+        #if DEBUG
         print("Square inventory fetched: \(inventoryCounts.count) items with stock")
+        #endif
         return inventoryCounts
     }
 }
