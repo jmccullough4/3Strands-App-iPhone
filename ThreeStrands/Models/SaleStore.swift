@@ -36,7 +36,7 @@ struct InboxItem: Identifiable, Codable {
 @MainActor
 class SaleStore: ObservableObject {
     @Published var sales: [FlashSale] = []
-    @Published var popUpSales: [PopUpSale] = []
+    @Published var popUpMarkets: [PopUpSale] = []
     @Published var announcements: [Announcement] = []
     @Published var events: [CattleEvent] = []
     @Published var inboxItems: [InboxItem] = []
@@ -172,13 +172,13 @@ class SaleStore: ObservableObject {
         isLoading = sales.isEmpty
         do {
             async let flashSalesTask = APIService.shared.fetchFlashSales()
-            async let popUpSalesTask = APIService.shared.fetchPopUpSales()
+            async let popUpMarketsTask = APIService.shared.fetchPopUpMarkets()
             async let announcementsTask = APIService.shared.fetchAnnouncements()
             async let eventsTask = APIService.shared.fetchEvents()
 
-            let (fetchedSales, fetchedPopUps, fetchedAnnouncements, fetchedEvents) = try await (flashSalesTask, popUpSalesTask, announcementsTask, eventsTask)
+            let (fetchedSales, fetchedPopUps, fetchedAnnouncements, fetchedEvents) = try await (flashSalesTask, popUpMarketsTask, announcementsTask, eventsTask)
             sales = fetchedSales
-            popUpSales = fetchedPopUps
+            popUpMarkets = fetchedPopUps
             announcements = fetchedAnnouncements
             events = fetchedEvents
         } catch {
@@ -189,9 +189,9 @@ class SaleStore: ObservableObject {
                 print("Flash sales fetch failed: \(error.localizedDescription)")
             }
             do {
-                popUpSales = try await APIService.shared.fetchPopUpSales()
+                popUpMarkets = try await APIService.shared.fetchPopUpMarkets()
             } catch {
-                print("Pop-up sales fetch failed: \(error.localizedDescription)")
+                print("Pop-up markets fetch failed: \(error.localizedDescription)")
             }
             do {
                 announcements = try await APIService.shared.fetchAnnouncements()

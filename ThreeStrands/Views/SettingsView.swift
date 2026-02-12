@@ -112,7 +112,7 @@ struct SettingsView: View {
                     HStack {
                         settingsRow(icon: "info.circle.fill", title: "Version", color: Theme.textSecondary)
                         Spacer()
-                        Text("1.0.0")
+                        Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
                             .font(Theme.captionFont)
                             .foregroundColor(Theme.textSecondary)
                     }

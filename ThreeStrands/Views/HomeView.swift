@@ -146,19 +146,19 @@ struct HomeView: View {
 
     private var popUpSalesSection: some View {
         Group {
-            if !store.popUpSales.isEmpty {
+            if !store.popUpMarkets.isEmpty {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Image(systemName: "mappin.and.ellipse")
                             .foregroundColor(Theme.bronzeGold)
-                        Text("Pop-Up Sales")
+                        Text("Pop-Up Markets")
                             .font(Theme.headingFont)
                             .foregroundColor(Theme.primary)
                         Spacer()
                     }
                     .padding(.horizontal, Theme.screenPadding)
 
-                    ForEach(store.popUpSales) { sale in
+                    ForEach(store.popUpMarkets) { sale in
                         NavigationLink(destination: PopUpSaleView()) {
                             HStack(spacing: 14) {
                                 Image(systemName: "mappin.circle.fill")

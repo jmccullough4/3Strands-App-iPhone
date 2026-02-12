@@ -7,15 +7,15 @@ struct PopUpSaleView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if store.isLoading && store.popUpSales.isEmpty {
-                    ProgressView("Loading pop-up sales...")
+                if store.isLoading && store.popUpMarkets.isEmpty {
+                    ProgressView("Loading pop-up markets...")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if store.popUpSales.isEmpty {
+                } else if store.popUpMarkets.isEmpty {
                     VStack(spacing: 16) {
                         Image(systemName: "mappin.and.ellipse")
                             .font(.system(size: 40))
                             .foregroundColor(Theme.primary)
-                        Text("No Pop-Up Sales Right Now")
+                        Text("No Pop-Up Markets Right Now")
                             .font(.headline)
                         Text("Check back soon for our next location!")
                             .font(.subheadline)
@@ -23,7 +23,7 @@ struct PopUpSaleView: View {
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
-                    List(store.popUpSales) { sale in
+                    List(store.popUpMarkets) { sale in
                         PopUpSaleRow(sale: sale)
                     }
                     .listStyle(.insetGrouped)
@@ -31,7 +31,7 @@ struct PopUpSaleView: View {
                 }
             }
             .background(Theme.background)
-            .navigationTitle("Pop-Up Sales")
+            .navigationTitle("Pop-Up Markets")
             .navigationBarTitleDisplayMode(.inline)
             .refreshable {
                 await store.refreshSales()

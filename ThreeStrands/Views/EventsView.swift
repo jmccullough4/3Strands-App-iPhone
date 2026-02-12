@@ -13,6 +13,7 @@ struct CattleEvent: Identifiable {
     let latitude: Double
     let longitude: Double
     let icon: String
+    let isPopup: Bool
 
     var coordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
@@ -252,14 +253,14 @@ struct EventsView: View {
         HStack(spacing: 14) {
             // Time block
             VStack(spacing: 2) {
-                Image(systemName: event.icon)
+                Image(systemName: event.isPopup ? "truck.box.fill" : event.icon)
                     .font(.system(size: 22))
-                    .foregroundColor(Theme.bronze)
+                    .foregroundColor(event.isPopup ? Theme.bronzeGold : Theme.bronze)
             }
             .frame(width: 44, height: 44)
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Theme.bronze.opacity(0.1))
+                    .fill((event.isPopup ? Theme.bronzeGold : Theme.bronze).opacity(0.1))
             )
 
             VStack(alignment: .leading, spacing: 4) {

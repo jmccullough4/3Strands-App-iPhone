@@ -43,10 +43,10 @@ class APIService {
         return try await SquareService.shared.fetchCatalog()
     }
 
-    // MARK: - Pop-Up Sales (from dashboard — snake_case JSON)
+    // MARK: - Pop-Up Markets (from dashboard — snake_case JSON)
 
-    func fetchPopUpSales() async throws -> [PopUpSale] {
-        let url = URL(string: "\(dashboardURL)/api/public/pop-up-sales")!
+    func fetchPopUpMarkets() async throws -> [PopUpSale] {
+        let url = URL(string: "\(dashboardURL)/api/public/pop-up-markets")!
         let (data, response) = try await session.data(from: url)
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw APIError.serverError
@@ -335,6 +335,7 @@ struct APIEvent: Codable {
     let endDate: String?
     let icon: String?
     let isActive: Bool
+    let isPopup: Bool?
 
     func toCattleEvent() -> CattleEvent {
         let formatter = DateFormatter()
@@ -363,7 +364,8 @@ struct APIEvent: Codable {
             location: location ?? "",
             latitude: latitude ?? 0,
             longitude: longitude ?? 0,
-            icon: icon ?? "calendar.fill"
+            icon: icon ?? "calendar.fill",
+            isPopup: isPopup ?? false
         )
     }
 }
