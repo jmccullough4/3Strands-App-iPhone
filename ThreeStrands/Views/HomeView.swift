@@ -46,6 +46,37 @@ struct HomeView: View {
                         }
                     }
 
+                    // Your Favorites
+                    if !store.favoriteSales.isEmpty {
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Image(systemName: "heart.fill")
+                                    .foregroundColor(.red)
+                                Text("Your Favorites")
+                                    .font(Theme.headingFont)
+                                    .foregroundColor(Theme.primary)
+                                Spacer()
+                                Text("\(store.favoriteSales.count) saved")
+                                    .font(Theme.captionFont)
+                                    .foregroundColor(Theme.textSecondary)
+                            }
+                            .padding(.horizontal, Theme.screenPadding)
+
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 14) {
+                                    ForEach(store.favoriteSales) { sale in
+                                        NavigationLink(destination: SaleDetailView(sale: sale)) {
+                                            FlashSaleCard(sale: sale)
+                                                .frame(width: 280)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                                .padding(.horizontal, Theme.screenPadding)
+                            }
+                        }
+                    }
+
                     // Pop-Up Sales
                     popUpSalesSection
 

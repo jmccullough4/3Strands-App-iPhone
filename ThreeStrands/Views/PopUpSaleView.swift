@@ -105,6 +105,15 @@ struct PopUpSaleRow: View {
                         .padding(.vertical, 8)
                         .background(Capsule().fill(Theme.bronze))
                 }
+
+                ShareLink(item: popUpShareText) {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Capsule().fill(Theme.bronzeGold))
+                }
             }
         }
         .padding(.vertical, 6)
@@ -128,6 +137,15 @@ struct PopUpSaleRow: View {
         display.dateStyle = .medium
         display.timeStyle = .short
         return display.string(from: date)
+    }
+
+    private var popUpShareText: String {
+        var text = sale.title
+        if let address = sale.address, !address.isEmpty {
+            text += "\n\(address)"
+        }
+        text += "\nhttps://3strandsbeef.com"
+        return text
     }
 
     private func openInAppleMaps() {

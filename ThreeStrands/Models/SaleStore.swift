@@ -45,11 +45,13 @@ class SaleStore: ObservableObject {
 
     /// IDs of inbox items the user dismissed from the Home screen (but not deleted from Inbox)
     @Published var dismissedFromHome: Set<String> = []
+    @Published var favoriteSaleIDs: Set<String> = []
 
     private let prefsKey = NotificationPreferences.storageKey
     private let inboxKey = "notification_inbox"
     private let dismissedKey = "dismissed_from_home"
     private let seenAnnouncementIDsKey = "seen_announcement_ids"
+    private let favoritesKey = "favorite_sale_ids"
 
     init() {
         if let data = UserDefaults.standard.data(forKey: NotificationPreferences.storageKey),
@@ -69,6 +71,11 @@ class SaleStore: ObservableObject {
         if let ids = UserDefaults.standard.array(forKey: dismissedKey) as? [String] {
             self.dismissedFromHome = Set(ids)
         }
+
+        // Load favorites
+        if let ids = UserDefaults.standard.array(forKey: favoritesKey) as? [String] {
+            self.favoriteSaleIDs = Set(ids)
+        }
     }
 
     /// Inbox items that haven't been dismissed from the Home screen
@@ -87,6 +94,29 @@ class SaleStore: ObservableObject {
 
     var unreadCount: Int {
         inboxItems.filter { !$0.isRead }.count
+    }
+
+    // MARK: - Favorites
+
+    var favoriteSales: [FlashSale] {
+        sales.filter { favoriteSaleIDs.contains($0.id) }
+    }
+
+    func isFavoriteSale(_ id: String) -> Bool {
+        favoriteSaleIDs.contains(id)
+    }
+
+    func toggleFavoriteSale(_ id: String) {
+        if favoriteSaleIDs.contains(id) {
+            favoriteSaleIDs.remove(id)
+        } else {
+            favoriteSaleIDs.insert(id)
+        }
+        saveFavorites()
+    }
+
+    private func saveFavorites() {
+        UserDefaults.standard.set(Array(favoriteSaleIDs), forKey: favoritesKey)
     }
 
     // MARK: - Preferences

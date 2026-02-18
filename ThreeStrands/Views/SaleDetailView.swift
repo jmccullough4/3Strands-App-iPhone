@@ -3,6 +3,8 @@ import SwiftUI
 struct SaleDetailView: View {
     let sale: FlashSale
     @EnvironmentObject var notificationService: NotificationService
+    @EnvironmentObject var store: SaleStore
+    @Environment(\.openURL) private var openURL
     @State private var showingNotificationSent = false
 
     var body: some View {
@@ -108,7 +110,9 @@ struct SaleDetailView: View {
                     if !sale.isExpired {
                         VStack(spacing: 12) {
                             Button("Order on 3strands Website") {
-                                // Deep link to Square Online store
+                                if let url = URL(string: "https://3strandsbeef.com") {
+                                    openURL(url)
+                                }
                             }
                             .buttonStyle(BrandButtonStyle(color: Theme.bronze))
 
@@ -129,11 +133,32 @@ struct SaleDetailView: View {
         }
         .background(Theme.background)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                Button {
+                    withAnimation(.spring(response: 0.3)) {
+                        store.toggleFavoriteSale(sale.id)
+                    }
+                } label: {
+                    Image(systemName: store.isFavoriteSale(sale.id) ? "heart.fill" : "heart")
+                        .foregroundColor(store.isFavoriteSale(sale.id) ? .red : Theme.primary)
+                }
+
+                ShareLink(item: saleShareText) {
+                    Image(systemName: "square.and.arrow.up")
+                        .foregroundColor(Theme.primary)
+                }
+            }
+        }
         .alert("Reminder Set!", isPresented: $showingNotificationSent) {
             Button("OK", role: .cancel) {}
         } message: {
             Text("You'll get a notification about this deal in a few seconds.")
         }
+    }
+
+    private var saleShareText: String {
+        "\(sale.title) - \(sale.discountPercent)% OFF! Was \(sale.formattedOriginalPrice), now \(sale.formattedSalePrice). Shop at https://3strandsbeef.com"
     }
 
     private func infoChip(icon: String, label: String, value: String) -> some View {

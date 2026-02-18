@@ -3,6 +3,7 @@ import SwiftUI
 struct FlashSaleCard: View {
     let sale: FlashSale
     var isCompact: Bool = true
+    @EnvironmentObject var store: SaleStore
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -89,6 +90,34 @@ struct FlashSaleCard: View {
                     lineWidth: 1
                 )
         )
+        .overlay(alignment: .topTrailing) {
+            Button {
+                withAnimation(.spring(response: 0.3)) {
+                    store.toggleFavoriteSale(sale.id)
+                }
+            } label: {
+                Image(systemName: store.isFavoriteSale(sale.id) ? "heart.fill" : "heart")
+                    .font(.system(size: 16))
+                    .foregroundColor(store.isFavoriteSale(sale.id) ? .red : Theme.textSecondary)
+                    .padding(10)
+                    .background(Circle().fill(Theme.cardBackground.opacity(0.8)))
+            }
+            .padding(8)
+        }
+        .contextMenu {
+            Button {
+                store.toggleFavoriteSale(sale.id)
+            } label: {
+                Label(
+                    store.isFavoriteSale(sale.id) ? "Remove from Favorites" : "Add to Favorites",
+                    systemImage: store.isFavoriteSale(sale.id) ? "heart.slash" : "heart"
+                )
+            }
+
+            ShareLink(item: "\(sale.title) - \(sale.discountPercent)% OFF! Was \(sale.formattedOriginalPrice), now \(sale.formattedSalePrice). Shop at https://3strandsbeef.com") {
+                Label("Share", systemImage: "square.and.arrow.up")
+            }
+        }
     }
 
     private var timerBadge: some View {

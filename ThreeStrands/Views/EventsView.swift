@@ -1,6 +1,7 @@
 import SwiftUI
 import MapKit
 import CoreLocation
+import EventKit
 
 // MARK: - Event Model
 
@@ -28,6 +29,8 @@ struct EventsView: View {
     @State private var displayedMonth = Date()
     @StateObject private var locationService = LocationService.shared
     @State private var cameraPosition: MapCameraPosition = .automatic
+    @State private var showCalendarAlert = false
+    @State private var calendarAlertMessage = ""
 
     private var events: [CattleEvent] {
         store.events
@@ -63,6 +66,11 @@ struct EventsView: View {
             .onAppear {
                 locationService.requestPermission()
                 locationService.startMonitoringEvents(events)
+            }
+            .alert("Calendar", isPresented: $showCalendarAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(calendarAlertMessage)
             }
         }
     }
@@ -287,15 +295,39 @@ struct EventsView: View {
 
             Spacer()
 
-            Button {
-                openDirections(to: event)
-            } label: {
-                Image(systemName: "arrow.triangle.turn.up.right.diamond.fill")
-                    .font(.system(size: 20))
-                    .foregroundColor(.white)
-                    .frame(width: 40, height: 40)
-                    .background(Theme.bronze)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            VStack(spacing: 8) {
+                Button {
+                    openDirections(to: event)
+                } label: {
+                    Image(systemName: "arrow.triangle.turn.up.right.diamond.fill")
+                        .font(.system(size: 20))
+                        .foregroundColor(.white)
+                        .frame(width: 40, height: 40)
+                        .background(Theme.bronze)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+
+                HStack(spacing: 6) {
+                    ShareLink(item: eventShareText(event)) {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.system(size: 14))
+                            .foregroundColor(Theme.primary)
+                            .frame(width: 32, height: 32)
+                            .background(Theme.primary.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+
+                    Button {
+                        addToCalendar(event)
+                    } label: {
+                        Image(systemName: "calendar.badge.plus")
+                            .font(.system(size: 14))
+                            .foregroundColor(Theme.primary)
+                            .frame(width: 32, height: 32)
+                            .background(Theme.primary.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                }
             }
         }
         .padding(14)
@@ -304,6 +336,51 @@ struct EventsView: View {
                 .fill(Theme.cardBackground)
                 .shadow(color: .black.opacity(0.05), radius: 8, y: 4)
         )
+    }
+
+    private func eventShareText(_ event: CattleEvent) -> String {
+        var text = "\(event.title)\n\(event.date.formatted(.dateTime.weekday(.wide).month(.wide).day().hour().minute()))\n\(event.location)"
+        if let end = event.endDate {
+            text += "\nUntil \(end.formatted(.dateTime.hour().minute()))"
+        }
+        text += "\nhttps://3strandsbeef.com"
+        return text
+    }
+
+    // MARK: - Calendar Integration
+
+    private func addToCalendar(_ event: CattleEvent) {
+        let eventStore = EKEventStore()
+        eventStore.requestFullAccessToEvents { granted, error in
+            DispatchQueue.main.async {
+                if granted {
+                    createCalendarEvent(store: eventStore, event: event)
+                } else {
+                    calendarAlertMessage = "Calendar access is required to add events. Please enable it in Settings."
+                    showCalendarAlert = true
+                }
+            }
+        }
+    }
+
+    private func createCalendarEvent(store: EKEventStore, event: CattleEvent) {
+        let calendarEvent = EKEvent(eventStore: store)
+        calendarEvent.title = event.title
+        calendarEvent.startDate = event.date
+        calendarEvent.endDate = event.endDate ?? event.date.addingTimeInterval(3600)
+        calendarEvent.location = event.location
+        calendarEvent.notes = "3 Strands Cattle Co. event\nhttps://3strandsbeef.com"
+        calendarEvent.addAlarm(EKAlarm(relativeOffset: -3600))
+        calendarEvent.calendar = store.defaultCalendarForNewEvents
+
+        do {
+            try store.save(calendarEvent, span: .thisEvent)
+            calendarAlertMessage = "\"\(event.title)\" has been added to your calendar."
+            showCalendarAlert = true
+        } catch {
+            calendarAlertMessage = "Could not save the event: \(error.localizedDescription)"
+            showCalendarAlert = true
+        }
     }
 
     // MARK: - Directions

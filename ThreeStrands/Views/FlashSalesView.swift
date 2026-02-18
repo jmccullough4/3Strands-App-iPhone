@@ -3,10 +3,17 @@ import SwiftUI
 struct FlashSalesView: View {
     @EnvironmentObject var store: SaleStore
     @State private var filterCut: CutType?
+    @State private var showFavoritesOnly = false
 
     var filteredSales: [FlashSale] {
-        guard let cut = filterCut else { return store.activeSales }
-        return store.activeSales.filter { $0.cutType == cut }
+        var sales = store.activeSales
+        if showFavoritesOnly {
+            sales = sales.filter { store.isFavoriteSale($0.id) }
+        }
+        if let cut = filterCut {
+            sales = sales.filter { $0.cutType == cut }
+        }
+        return sales
     }
 
     var body: some View {
@@ -16,8 +23,16 @@ struct FlashSalesView: View {
                     // Filter chips
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
-                            filterChip(label: "All", isSelected: filterCut == nil) {
+                            filterChip(label: "All", isSelected: filterCut == nil && !showFavoritesOnly) {
                                 filterCut = nil
+                                showFavoritesOnly = false
+                            }
+                            filterChip(
+                                label: "\(Image(systemName: "heart.fill")) Favorites",
+                                isSelected: showFavoritesOnly
+                            ) {
+                                showFavoritesOnly.toggle()
+                                if showFavoritesOnly { filterCut = nil }
                             }
                             ForEach(CutType.allCases, id: \.self) { cut in
                                 filterChip(
@@ -74,7 +89,7 @@ struct FlashSalesView: View {
         }
     }
 
-    private func filterChip(label: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+    private func filterChip(label: LocalizedStringKey, isSelected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(label)
                 .font(.system(size: 13, weight: .semibold))

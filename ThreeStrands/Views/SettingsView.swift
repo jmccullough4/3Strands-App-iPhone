@@ -4,7 +4,6 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var store: SaleStore
     @EnvironmentObject var notificationService: NotificationService
-    @State private var showTestAlert = false
 
     var body: some View {
         NavigationStack {
@@ -92,23 +91,6 @@ struct SettingsView: View {
                     Text("Only get notified about flash sales for cuts you care about.")
                 }
 
-                #if DEBUG
-                // Test notification — hidden in release builds
-                Section {
-                    Button {
-                        notificationService.scheduleTestNotification(
-                            sale: "Test Flash Sale",
-                            discount: "25%"
-                        )
-                        showTestAlert = true
-                    } label: {
-                        settingsRow(icon: "paperplane.fill", title: "Send Test Notification", color: Theme.primary)
-                    }
-                } header: {
-                    Text("Testing")
-                }
-                #endif
-
                 // About
                 Section {
                     HStack {
@@ -146,11 +128,6 @@ struct SettingsView: View {
                     }
                     .foregroundColor(Theme.primary)
                 }
-            }
-            .alert("Test Sent!", isPresented: $showTestAlert) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text("A test notification will appear in ~5 seconds.")
             }
             .task {
                 await notificationService.checkAuthorizationStatus()
